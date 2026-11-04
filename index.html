@@ -490,7 +490,9 @@ function handleAccountSubmit(e) {
             password,
             balance: 0,
             transactions: [],
-            pendingCredits: []
+            pendingCredits: [],
+            totalTrades: 0,
+            consecutiveLosses: 0
         };
 
         savedAccounts.push(newAccount);
@@ -535,7 +537,7 @@ function logoutAccount() {
     toast('You have logged out.');
 }
 
-// 10-SECOND REAL MARKET TRADING ENGINE (Fair Win/Loss Calculation)
+// 10-SECOND HIGH-DOPAMINE REAL MARKET TRADING ENGINE
 function attemptTrade(direction) {
     if (!currentAccount) {
         toast('Please login first to trade.');
@@ -583,19 +585,46 @@ function attemptTrade(direction) {
             isTradeActive = false;
             if(timerDisplay) timerDisplay.textContent = '10s';
 
-            // Real Market Price Check at Expiry
-            const exitPrice = currentPrice;
-            let isWin = false;
+            // Dopamine Win/Loss Calculation Logic
+            if (currentAccount.totalTrades === undefined) currentAccount.totalTrades = 0;
+            if (currentAccount.consecutiveLosses === undefined) currentAccount.consecutiveLosses = 0;
 
-            if (direction === 'BUY' || direction === 'CALL' || direction === 'UP') {
-                isWin = exitPrice > entryPrice;
-            } else if (direction === 'SELL' || direction === 'PUT' || direction === 'DOWN') {
-                isWin = exitPrice < entryPrice;
+            currentAccount.totalTrades++;
+            let isWin = false;
+            let isNearMiss = false;
+
+            // Micro-Wins (New Accounts: High initial win rate to trigger dopamine)
+            if (currentAccount.totalTrades <= 3) {
+                isWin = Math.random() < 0.75;
+            } 
+            // Anti-Frustration safeguard: grant win after 3 consecutive losses
+            else if (currentAccount.consecutiveLosses >= 3) {
+                isWin = true;
+            } 
+            // Standard House Edge Win Rate (~42%)
+            else {
+                isWin = Math.random() < 0.42;
             }
 
-            // Natural 50/50 contingency if micro-price hasn't changed
-            if (exitPrice === entryPrice) {
-                isWin = Math.random() > 0.5;
+            if (isWin) {
+                currentAccount.consecutiveLosses = 0;
+            } else {
+                currentAccount.consecutiveLosses++;
+                // 60% Chance of Near-Miss visual effect on Loss
+                isNearMiss = Math.random() < 0.60;
+            }
+
+            // Calculate Exit Price relative to Market Price
+            let priceDelta = 0.50 + Math.random() * 2.50;
+            if (isNearMiss) {
+                priceDelta = 0.05 + Math.random() * 0.15; // Tight gap
+            }
+
+            let exitPrice = entryPrice;
+            if (direction === 'BUY' || direction === 'CALL' || direction === 'UP') {
+                exitPrice = isWin ? (entryPrice + priceDelta) : (entryPrice - priceDelta);
+            } else {
+                exitPrice = isWin ? (entryPrice - priceDelta) : (entryPrice + priceDelta);
             }
 
             if (isWin) {
@@ -630,7 +659,8 @@ function attemptTrade(direction) {
 
                 updateDashboard();
                 playSound('loss');
-                alert('❌ TRADE LOST!\n\nEntry: $' + entryPrice.toFixed(2) + '\nExit: $' + exitPrice.toFixed(2) + '\nLoss: -' + formatPKR(amount));
+                const nearMissText = isNearMiss ? '\n(Near Miss! So close!)' : '';
+                alert('❌ TRADE LOST!\n\nEntry: $' + entryPrice.toFixed(2) + '\nExit: $' + exitPrice.toFixed(2) + nearMissText + '\nLoss: -' + formatPKR(amount));
                 toast('Trade Lost: ' + formatPKR(amount));
             }
         }
