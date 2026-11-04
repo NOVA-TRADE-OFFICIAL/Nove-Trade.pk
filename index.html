@@ -5,9 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NOVA TRADE | Global Markets</title>
 
+<!-- PWA & NATIVE MOBILE APP CAPABILITIES -->
+<link rel="manifest" href="/manifest.json" id="manifest-placeholder">
+<meta name="theme-color" content="#080a0c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NovaTrade">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 *{box-sizing:border-box}
@@ -39,210 +48,260 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <body>
 
-<header class="sticky top-0 z-30 bg-[#090b0d]/95 border-b border-[#292e32]">
-<div class="max-w-[1500px] mx-auto p-4 flex justify-between items-center gap-3 flex-wrap">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl">N</div>
-<div>
-<div class="brand font-extrabold text-lg">NOVA TRADE</div>
-<div class="text-[9px] tracking-[.3em] muted">GLOBAL MARKETS TERMINAL</div>
-</div>
-</div>
-<div class="flex items-center gap-2 flex-wrap">
-<span id="headerAccountStatus" class="pill">GUEST ACCOUNT</span>
-<button id="accountHeaderButton" onclick="openAccountModal()" class="btn goldbtn text-xs">CREATE ACCOUNT / LOGIN</button>
-<button id="logoutButton" onclick="logoutAccount()" class="btn border border-[#d0ae70] gold text-xs hidden">LOGOUT</button>
-</div>
-</div>
-</header>
+  <!-- TOP APP DOWNLOAD BANNER (VISIBLE FOR ALL MOBILE VISITORS) -->
+  <div id="pwaDownloadBanner" class="bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 text-black px-4 py-2.5 flex items-center justify-between shadow-lg border-b border-amber-400/40 sticky top-0 z-50">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-black text-amber-400 font-bold flex items-center justify-center font-mono text-sm shadow">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div>
+        <p class="text-xs font-black tracking-tight leading-tight uppercase">Download Official NovaTrade App</p>
+        <p class="text-[10px] text-black/80 font-medium">Fast 1-Click Install for Android & iPhone</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="installAppBtn" onclick="triggerPwaInstall()" class="bg-black text-amber-400 hover:bg-gray-900 text-xs px-3 py-1.5 rounded-lg font-bold font-mono border border-amber-400/50 shadow flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-download"></i> INSTALL APP
+      </button>
+      <button onclick="dismissPwaBanner()" class="text-black/60 hover:text-black text-sm font-bold px-1.5 py-0.5">✕</button>
+    </div>
+  </div>
 
-<main class="max-w-[1500px] mx-auto p-4 md:p-6">
+  <script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('pwaDownloadBanner');
+      if (banner && localStorage.getItem('pwa_banner_dismissed') !== 'true') {
+        banner.style.display = 'flex';
+      }
+    });
 
-<div class="flex justify-between items-center flex-wrap gap-3 mb-5">
-<div>
-<div class="gold text-xs tracking-[.2em] mb-2">PREMIUM MARKET EXPERIENCE</div>
-<h1 class="text-3xl font-extrabold" style="font-family:Manrope">Trading Terminal<span class="gold">.</span></h1>
-<p class="muted text-xs mt-2">10-second trading environment</p>
-</div>
-<div class="pill"><span class="text-green-400">●</span> SIMULATION ACTIVE</div>
-</div>
+    function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            toast('NovaTrade App Installed Successfully!');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        toast('To install: Tap your browser menu (⋮) and select "Add to Home Screen"');
+      }
+    }
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-<div class="panel p-4"><div class="muted text-xs">BTC / USD</div><div class="font-extrabold text-xl mt-2" id="btc">$67,482.20</div><div class="text-xs text-green-400 mt-1">Bitcoin</div></div>
-<div class="panel p-4"><div class="muted text-xs">ETH / USD</div><div class="font-extrabold text-xl mt-2" id="eth">$3,521.84</div><div class="text-xs text-green-400 mt-1">Ethereum</div></div>
-<div class="panel p-4"><div class="muted text-xs">XAU / USD</div><div class="font-extrabold text-xl mt-2" id="xau">$2,386.40</div><div class="text-xs gold mt-1">Gold</div></div>
-<div class="panel p-4"><div class="muted text-xs">EUR / USD</div><div class="font-extrabold text-xl mt-2" id="eur">1.08426</div><div class="text-xs text-green-400 mt-1">Forex</div></div>
-</div>
+    function dismissPwaBanner() {
+      const banner = document.getElementById('pwaDownloadBanner');
+      if (banner) banner.style.display = 'none';
+      localStorage.setItem('pwa_banner_dismissed', 'true');
+    }
+  </script>
 
-<div class="layout grid grid-cols-[minmax(0,1fr)_330px] gap-4">
-<div class="space-y-4 min-w-0">
+  <!-- HEADER NAVBAR WITH ACCOUNT CONTROLS -->
+  <header class="sticky top-0 z-30 bg-[#090b0d]/95 border-b border-[#292e32]">
+    <div class="max-w-[1500px] mx-auto p-4 flex justify-between items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl">N</div>
+        <div>
+          <div class="brand font-extrabold text-lg">NOVA TRADE</div>
+          <div class="text-[9px] tracking-[.3em] muted">GLOBAL MARKETS TERMINAL</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span id="headerAccountStatus" class="pill">GUEST ACCOUNT</span>
+        <button id="accountHeaderButton" onclick="openAccountModal()" class="btn goldbtn text-xs">CREATE ACCOUNT / LOGIN</button>
+        <button id="logoutButton" onclick="logoutAccount()" class="btn border border-[#d0ae70] gold text-xs hidden">LOGOUT</button>
+      </div>
+    </div>
+  </header>
 
-<div class="panel overflow-hidden">
-<div class="p-4 border-b border-[#282e32] flex justify-between items-center flex-wrap gap-3">
-<div><div class="font-bold text-lg">BTC / USD</div><div class="muted text-xs">Bitcoin · Live Price Feed</div></div>
-<div class="text-right"><div id="price" class="font-extrabold text-2xl">$67,482.20</div><div class="text-xs text-green-400">Market price</div></div>
-</div>
-<div class="p-3 flex justify-between items-center flex-wrap gap-2">
-<div class="flex gap-2"><span class="pill gold">1m</span><span class="pill">5m</span><span class="pill">15m</span><span class="pill">1h</span></div>
-<div class="pill gold">CANDLESTICK CHART</div>
-</div>
-<div class="chartbox w-full h-[500px]"><div id="chart" class="w-full h-full"></div></div>
-<div class="p-3 border-t border-[#282e32] text-xs muted flex gap-4 flex-wrap">
-<span>O: <b id="openPrice">-</b></span>
-<span>H: <b id="highPrice">-</b></span>
-<span>L: <b id="lowPrice">-</b></span>
-<span>C: <b id="closePrice">-</b></span>
-</div>
-</div>
+  <main class="max-w-[1500px] mx-auto p-4 md:p-6">
+    <div class="flex justify-between items-center flex-wrap gap-3 mb-5">
+      <div>
+        <div class="gold text-xs tracking-[.2em] mb-2">PREMIUM MARKET EXPERIENCE</div>
+        <h1 class="text-3xl font-extrabold" style="font-family:Manrope">Trading Terminal<span class="gold">.</span></h1>
+        <p class="muted text-xs mt-2">10-second trading environment</p>
+      </div>
+      <div class="pill"><span class="text-green-400">●</span> SIMULATION ACTIVE</div>
+    </div>
 
-<div class="panel p-4">
-<div class="flex justify-between items-center flex-wrap gap-2 mb-3">
-<div class="font-bold">Account Activity</div>
-<span class="pill text-blue-400">100 Profiles</span>
-</div>
-<div class="text-[10px] muted mb-3">Sample Activity · Illustrative entries</div>
-<div id="accountActivityList" class="space-y-2 max-h-[430px] overflow-y-auto pr-1"></div>
-</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="panel p-4"><div class="muted text-xs">BTC / USD</div><div class="font-extrabold text-xl mt-2" id="btc">$67,482.20</div><div class="text-xs text-green-400 mt-1">Bitcoin</div></div>
+      <div class="panel p-4"><div class="muted text-xs">ETH / USD</div><div class="font-extrabold text-xl mt-2" id="eth">$3,521.84</div><div class="text-xs text-green-400 mt-1">Ethereum</div></div>
+      <div class="panel p-4"><div class="muted text-xs">XAU / USD</div><div class="font-extrabold text-xl mt-2" id="xau">$2,386.40</div><div class="text-xs gold mt-1">Gold</div></div>
+      <div class="panel p-4"><div class="muted text-xs">EUR / USD</div><div class="font-extrabold text-xl mt-2" id="eur">1.08426</div><div class="text-xs text-green-400 mt-1">Forex</div></div>
+    </div>
 
-<div class="panel p-4">
-<div class="flex justify-between items-center gap-2 flex-wrap mb-3">
-<div class="font-bold">Transaction History</div>
-<span class="pill gold">COMPLETED</span>
-</div>
-<div id="transactionHistory" class="muted text-sm text-center py-5">No test transactions yet.</div>
-</div>
-</div>
+    <div class="layout grid grid-cols-[minmax(0,1fr)_330px] gap-4">
+      <div class="space-y-4 min-w-0">
 
-<aside class="space-y-4">
+        <div class="panel overflow-hidden">
+          <div class="p-4 border-b border-[#282e32] flex justify-between items-center flex-wrap gap-3">
+            <div><div class="font-bold text-lg">BTC / USD</div><div class="muted text-xs">Bitcoin · Live Price Feed</div></div>
+            <div class="text-right"><div id="price" class="font-extrabold text-2xl">$67,482.20</div><div class="text-xs text-green-400">Market price</div></div>
+          </div>
+          <div class="p-3 flex justify-between items-center flex-wrap gap-2">
+            <div class="flex gap-2"><span class="pill gold">1m</span><span class="pill">5m</span><span class="pill">15m</span><span class="pill">1h</span></div>
+            <div class="pill gold">CANDLESTICK CHART</div>
+          </div>
+          <div class="chartbox w-full h-[500px]"><div id="chart" class="w-full h-full"></div></div>
+          <div class="p-3 border-t border-[#282e32] text-xs muted flex gap-4 flex-wrap">
+            <span>O: <b id="openPrice">-</b></span>
+            <span>H: <b id="highPrice">-</b></span>
+            <span>L: <b id="lowPrice">-</b></span>
+            <span>C: <b id="closePrice">-</b></span>
+          </div>
+        </div>
 
-<div class="panel p-5">
-<div class="flex justify-between items-center">
-<div class="muted text-xs tracking-widest">ACCOUNT BALANCE</div>
-<span class="pill gold">LIVE WALLET</span>
-</div>
-<div class="font-extrabold text-2xl mt-3 gold" id="balanceDisplay">PKR 0.00</div>
-<div class="text-xs muted mt-2">Live trading balance.</div>
-<button onclick="openQrDepositModal()" class="btn goldbtn w-full mt-5">DEPOSIT</button>
-<button onclick="openWithdrawModal()" class="btn w-full mt-3 border border-[#d0ae70] gold">WITHDRAW FUNDS</button>
-</div>
+        <div class="panel p-4">
+          <div class="flex justify-between items-center flex-wrap gap-2 mb-3">
+            <div class="font-bold">Account Activity</div>
+            <span class="pill text-blue-400">100 Profiles</span>
+          </div>
+          <div class="text-[10px] muted mb-3">Sample Activity · Illustrative entries</div>
+          <div id="accountActivityList" class="space-y-2 max-h-[430px] overflow-y-auto pr-1"></div>
+        </div>
 
-<div class="panel p-5">
-<div class="flex justify-between items-center mb-4">
-<div class="font-bold">Place Trade</div>
-<span class="gold text-xs">NOVA DESK</span>
-</div>
-<label class="muted text-xs">Trading Asset</label>
-<select id="tradeAsset" class="field mt-2 mb-4">
-<option>BTC / USD</option><option>ETH / USD</option><option>XAU / USD</option><option>EUR / USD</option>
-</select>
-<label class="muted text-xs">Investment Amount (PKR)</label>
-<input id="tradeAmount" type="number" min="1" step="1" class="field mt-2 mb-4" placeholder="Enter amount" value="500">
-<div class="trade-card border border-[#343a3e] rounded-xl p-4 mb-4">
-<div class="muted text-xs">TRADE EXPIRY</div>
-<div class="timer mt-2">10s</div>
-<div class="muted text-xs mt-1">Automatic 10-second close</div>
-</div>
-<div class="grid grid-cols-2 gap-3">
-<button onclick="attemptTrade('BUY')" class="btn bg-green-800 text-white">▲ BUY</button>
-<button onclick="attemptTrade('SELL')" class="btn bg-red-800 text-white">▼ SELL</button>
-</div>
-<p class="muted text-[10px] mt-4 leading-relaxed">10-second trade execution logic with market pricing.</p>
-</div>
+        <div class="panel p-4">
+          <div class="flex justify-between items-center gap-2 flex-wrap mb-3">
+            <div class="font-bold">Transaction History</div>
+            <span class="pill gold">COMPLETED</span>
+          </div>
+          <div id="transactionHistory" class="muted text-sm text-center py-5">No test transactions yet.</div>
+        </div>
+      </div>
 
-<div class="panel p-5">
-<div class="gold text-xs tracking-widest">ACCOUNT STATUS</div>
-<div id="accountPanelStatus" class="font-bold text-xl mt-3">GUEST</div>
-<div class="muted text-xs mt-2">Create account or login to deposit and execute live trades.</div>
-</div>
+      <aside class="space-y-4">
+        <div class="panel p-5">
+          <div class="flex justify-between items-center">
+            <div class="muted text-xs tracking-widest">ACCOUNT BALANCE</div>
+            <span class="pill gold">LIVE WALLET</span>
+          </div>
+          <div class="font-extrabold text-2xl mt-3 gold" id="balanceDisplay">PKR 0.00</div>
+          <div class="text-xs muted mt-2">Live trading balance.</div>
+          <button onclick="openQrDepositModal()" class="btn goldbtn w-full mt-5">DEPOSIT</button>
+          <button onclick="openWithdrawModal()" class="btn w-full mt-3 border border-[#d0ae70] gold">WITHDRAW FUNDS</button>
+        </div>
 
-</aside>
-</div>
+        <div class="panel p-5">
+          <div class="flex justify-between items-center mb-4">
+            <div class="font-bold">Place Trade</div>
+            <span class="gold text-xs">NOVA DESK</span>
+          </div>
+          <label class="muted text-xs">Trading Asset</label>
+          <select id="tradeAsset" class="field mt-2 mb-4">
+            <option>BTC / USD</option><option>ETH / USD</option><option>XAU / USD</option><option>EUR / USD</option>
+          </select>
+          <label class="muted text-xs">Investment Amount (PKR)</label>
+          <input id="tradeAmount" type="number" min="1" step="1" class="field mt-2 mb-4" placeholder="Enter amount" value="500">
+          <div class="trade-card border border-[#343a3e] rounded-xl p-4 mb-4">
+            <div class="muted text-xs">TRADE EXPIRY</div>
+            <div class="timer mt-2">10s</div>
+            <div class="muted text-xs mt-1">Automatic 10-second close</div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="attemptTrade('BUY')" class="btn bg-green-800 text-white">▲ BUY</button>
+            <button onclick="attemptTrade('SELL')" class="btn bg-red-800 text-white">▼ SELL</button>
+          </div>
+          <p class="muted text-[10px] mt-4 leading-relaxed">10-second trade execution logic with market pricing.</p>
+        </div>
 
-<footer class="text-center muted text-xs py-8">© 2026 NOVA TRADE · GLOBAL TRADING TERMINAL</footer>
-</main>
+        <div class="panel p-5">
+          <div class="gold text-xs tracking-widest">ACCOUNT STATUS</div>
+          <div id="accountPanelStatus" class="font-bold text-xl mt-3">GUEST</div>
+          <div class="muted text-xs mt-2">Create account or login to deposit and execute live trades.</div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="text-center muted text-xs py-8">© 2026 NOVA TRADE · GLOBAL TRADING TERMINAL</footer>
+  </main>
+
+</script>
 
 <!-- ACCOUNT MODAL -->
 <div id="accountModal" class="qr-modal-overlay">
-<div class="qr-modal-box">
-<button onclick="closeAccountModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
-<div class="brand gold text-xs mb-2">NOVA TRADE · ACCOUNT</div>
-<h3 id="accountModalTitle" class="text-xl font-bold mb-4">Create Account</h3>
+  <div class="qr-modal-box">
+    <button onclick="closeAccountModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
+    <div class="brand gold text-xs mb-2">NOVA TRADE · ACCOUNT</div>
+    <h3 id="accountModalTitle" class="text-xl font-bold mb-4">Create Account</h3>
 
-<div class="grid grid-cols-2 gap-2 mb-4">
-<button id="createModeButton" onclick="setAccountMode('create')" class="btn goldbtn">CREATE ACCOUNT</button>
-<button id="loginModeButton" onclick="setAccountMode('login')" class="btn border border-[#343a3e] muted">LOGIN</button>
-</div>
+    <div class="grid grid-cols-2 gap-2 mb-4">
+      <button id="createModeButton" onclick="setAccountMode('create')" class="btn goldbtn">CREATE ACCOUNT</button>
+      <button id="loginModeButton" onclick="setAccountMode('login')" class="btn border border-[#343a3e] muted">LOGIN</button>
+    </div>
 
-<form id="accountForm" class="space-y-3" onsubmit="handleAccountSubmit(event)">
-<input id="accountName" class="field" placeholder="Full name" autocomplete="name" required>
-<input id="accountEmail" type="email" class="field" placeholder="Email address" autocomplete="email" required>
-<input id="accountPassword" type="password" class="field" placeholder="Password (minimum 8 characters)" minlength="8" autocomplete="new-password" required>
-<button id="accountSubmitButton" class="btn goldbtn w-full" type="submit">CREATE ACCOUNT</button>
-</form>
+    <form id="accountForm" class="space-y-3" onsubmit="handleAccountSubmit(event)">
+      <input id="accountName" class="field" placeholder="Full name" autocomplete="name" required>
+      <input id="accountEmail" type="email" class="field" placeholder="Email address" autocomplete="email" required>
+      <input id="accountPassword" type="password" class="field" placeholder="Password (minimum 8 characters)" minlength="8" autocomplete="new-password" required>
+      <button id="accountSubmitButton" class="btn goldbtn w-full" type="submit">CREATE ACCOUNT</button>
+    </form>
 
-<p class="muted text-xs mt-4">Accounts are securely saved in browser storage so your balance and login persist across page refreshes.</p>
-<div id="accountStatus" class="gold text-sm mt-3"></div>
-</div>
+    <p class="muted text-xs mt-4">Accounts are securely saved in browser storage so your balance and login persist across page refreshes.</p>
+    <div id="accountStatus" class="gold text-sm mt-3"></div>
+  </div>
 </div>
 
 <!-- DEPOSIT MODAL -->
 <div id="qrDepositModal" class="qr-modal-overlay">
-<div class="qr-modal-box">
-<button onclick="closeQrDepositModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
-<div class="brand gold text-xs mb-2">NOVA TRADE · DEPOSIT REQUEST</div>
+  <div class="qr-modal-box">
+    <button onclick="closeQrDepositModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
+    <div class="brand gold text-xs mb-2">NOVA TRADE · DEPOSIT REQUEST</div>
 
-<div id="depositFormView">
-<h3 class="text-xl font-bold mb-3">Scan & Pay (JazzCash / EasyPaisa)</h3>
+    <div id="depositFormView">
+      <h3 class="text-xl font-bold mb-3">Scan & Pay (JazzCash / EasyPaisa)</h3>
 
-<div class="urdu-inst">
-براہِ کرم JazzCash یا Easypaisa سے QR کوڈ اسکین کرکے ادائیگی کریں۔ ادائیگی مکمل ہونے کے بعد اپنی Transaction ID نیچے درج کریں۔
-</div>
+      <div class="urdu-inst">
+        براہِ کرم JazzCash یا Easypaisa سے QR کوڈ اسکین کرکے ادائیگی کریں۔ ادائیگی مکمل ہونے کے بعد اپنی Transaction ID نیچے درج کریں۔
+      </div>
 
-<div class="qr-timer-display" id="qrTimerDisplay">03:00</div>
+      <div class="qr-timer-display" id="qrTimerDisplay">03:00</div>
 
-<div class="qr-img-wrap">
-<img src="qr-code.png.jpeg" alt="NovaTrade payment QR code" onerror="this.style.display='none';document.getElementById('qrImageError').style.display='block'">
-</div>
-<p id="qrImageError" style="display:none" class="text-center text-red-400 text-xs mb-3">QR image not found. Upload qr-code.png.jpeg beside index.html.</p>
+      <div class="qr-img-wrap">
+        <img src="qr-code.png.jpeg" alt="NovaTrade payment QR code" onerror="this.style.display='none';document.getElementById('qrImageError').style.display='block'">
+      </div>
+      <p id="qrImageError" style="display:none" class="text-center text-red-400 text-xs mb-3">QR image not found. Upload qr-code.png.jpeg beside index.html.</p>
 
-<form id="depositForm" onsubmit="submitQrDeposit(event)" class="space-y-3">
-<div>
-<label class="muted text-[11px] mb-1 block">Payment Method</label>
-<select id="qrPaymentMethod" class="field" required>
-<option value="">Select payment method</option>
-<option value="Easypaisa">Easypaisa</option>
-<option value="JazzCash">JazzCash</option>
-</select>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Deposit Amount (PKR)</label>
-<input type="number" id="qrDepositAmount" class="field" placeholder="PKR 500 - 10,000" min="500" max="10000" step="1" required>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Your Email</label>
-<input type="email" id="qrUserEmail" class="field" placeholder="Enter your email address" required>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Transaction ID (TID)</label>
-<input type="text" id="qrTidNumber" class="field" placeholder="Enter transaction ID" minlength="4" maxlength="80" required>
-</div>
-<p class="muted text-[10px] leading-relaxed">Your deposit will be automatically credited to your balance after a 5-minute processing delay.</p>
-<button type="submit" id="qrSubmitButton" class="btn goldbtn w-full mt-2">SUBMIT DEPOSIT REQUEST</button>
-</form>
-</div>
+      <form id="depositForm" onsubmit="submitQrDeposit(event)" class="space-y-3">
+        <div>
+          <label class="muted text-[11px] mb-1 block">Payment Method</label>
+          <select id="qrPaymentMethod" class="field" required>
+            <option value="">Select payment method</option>
+            <option value="Easypaisa">Easypaisa</option>
+            <option value="JazzCash">JazzCash</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted text-[11px] mb-1 block">Deposit Amount (PKR)</label>
+          <input type="number" id="qrDepositAmount" class="field" placeholder="PKR 500 - 10,000" min="500" max="10000" step="1" required>
+        </div>
+        <div>
+          <label class="muted text-[11px] mb-1 block">Your Email</label>
+          <input type="email" id="qrUserEmail" class="field" placeholder="Enter your email address" required>
+        </div>
+        <div>
+          <label class="muted text-[11px] mb-1 block">Transaction ID (TID)</label>
+          <input type="text" id="qrTidNumber" class="field" placeholder="Enter transaction ID" minlength="4" maxlength="80" required>
+        </div>
+        <p class="muted text-[10px] leading-relaxed">Your deposit will be automatically credited to your balance after a 5-minute processing delay.</p>
+        <button type="submit" id="qrSubmitButton" class="btn goldbtn w-full mt-2">SUBMIT DEPOSIT REQUEST</button>
+      </form>
+    </div>
 
-<div id="depositReviewView" style="display:none">
-<div class="text-center py-3">
-<div class="text-4xl text-green-400 mb-3">✓</div>
-<h3 class="text-xl font-bold mb-3">Request Submitted</h3>
-<p class="muted text-sm leading-relaxed">Your deposit request has been received. Your balance will be updated automatically in 5 minutes.</p>
-<div class="qr-timer-display mt-5" id="depositReviewTimer">05:00</div>
-<p class="muted text-xs mt-3">You can close this window. The 5-minute timer continues in the background.</p>
-<button onclick="closeQrDepositModal()" class="btn goldbtn w-full mt-5">CLOSE</button>
-</div>
-</div>
-
-</div>
+    <div id="depositReviewView" style="display:none">
+      <div class="text-center py-3">
+        <div class="text-4xl text-green-400 mb-3">✓</div>
+        <h3 class="text-xl font-bold mb-3">Request Submitted</h3>
+        <p class="muted text-sm leading-relaxed">Your deposit request has been received. Your balance will be updated automatically in 5 minutes.</p>
+        <div class="qr-timer-display mt-5" id="depositReviewTimer">05:00</div>
+        <p class="muted text-xs mt-3">You can close this window. The 5-minute timer continues in the background.</p>
+        <button onclick="closeQrDepositModal()" class="btn goldbtn w-full mt-5">CLOSE</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- WITHDRAWAL MODAL -->
@@ -390,16 +449,21 @@ function setAccountMode(mode) {
 }
 
 function updateAccountUI() {
+    const statusHeader = $('headerAccountStatus');
+    const statusPanel = $('accountPanelStatus');
+    const headerBtn = $('accountHeaderButton');
+    const logoutBtn = $('logoutButton');
+
     if (currentAccount) {
-        $('headerAccountStatus').textContent = 'USER: ' + currentAccount.name;
-        $('accountPanelStatus').textContent = 'SESSION ACTIVE';
-        $('accountHeaderButton').classList.add('hidden');
-        $('logoutButton').classList.remove('hidden');
+        if (statusHeader) statusHeader.textContent = 'USER: ' + currentAccount.name;
+        if (statusPanel) statusPanel.textContent = 'SESSION ACTIVE';
+        if (headerBtn) headerBtn.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
     } else {
-        $('headerAccountStatus').textContent = 'GUEST ACCOUNT';
-        $('accountPanelStatus').textContent = 'GUEST';
-        $('accountHeaderButton').classList.remove('hidden');
-        $('logoutButton').classList.add('hidden');
+        if (statusHeader) statusHeader.textContent = 'GUEST ACCOUNT';
+        if (statusPanel) statusPanel.textContent = 'GUEST';
+        if (headerBtn) headerBtn.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
     }
 
     updateDashboard();
@@ -597,7 +661,6 @@ function attemptTrade(direction) {
             if (currentAccount.totalTrades <= 3) {
                 isWin = Math.random() < 0.75;
             } 
-            // Anti-Frustration safeguard: grant win after 3 consecutive losses
             else if (currentAccount.consecutiveLosses >= 3) {
                 isWin = true;
             } 
@@ -1192,16 +1255,19 @@ async function submitWithdrawal(e) {
 
 // CLOSE MODALS WHEN CLICKING OUTSIDE
 ['accountModal', 'qrDepositModal', 'withdrawModal'].forEach(id => {
-    $(id).addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.style.display = 'none';
+    const el = $(id);
+    if (el) {
+        el.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
 
-            if (id === 'qrDepositModal') {
-                clearInterval(qrTimerInterval);
-                qrTimerInterval = null;
+                if (id === 'qrDepositModal') {
+                    clearInterval(qrTimerInterval);
+                    qrTimerInterval = null;
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 // START APPLICATION & RESTORE LOCALSTORAGE SESSION
