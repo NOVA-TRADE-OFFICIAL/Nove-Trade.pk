@@ -71,6 +71,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
   </div>
 
+  <!-- PWA INSTALLATION INSTRUCTION MODAL (SMART FALLBACK) -->
+  <div id="pwaInstructionModal" class="qr-modal-overlay">
+    <div class="qr-modal-box text-center">
+      <button onclick="closePwaInstructionModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
+      <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/40 gold font-bold rounded-2xl flex items-center justify-center mx-auto text-2xl mb-3">
+        <i class="fa-solid fa-mobile-screen"></i>
+      </div>
+      <h3 class="text-xl font-bold mb-2">Install Nova Trade App</h3>
+      <div class="urdu-inst text-center border-none pr-0 mb-4">
+        ایپ انسٹال کرنے کے لیے اپنے براؤزر کے اوپر تین ڈاٹس <b>(⋮)</b> پر کلک کریں اور <b>Add to Home screen</b> منتخب کریں۔
+      </div>
+      <div class="bg-[#090d0f] border border-[#282e32] rounded-xl p-4 text-left space-y-3 mb-4">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center text-xs">1</span>
+          <span class="text-xs text-slate-300">Tap Browser Menu <b>(⋮)</b> or Share Button <b>(⎋)</b></span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center text-xs">2</span>
+          <span class="text-xs text-slate-300">Select <b>"Add to Home Screen"</b> or <b>"Install App"</b></span>
+        </div>
+      </div>
+      <button onclick="closePwaInstructionModal()" class="btn goldbtn w-full">GOT IT!</button>
+    </div>
+  </div>
+
   <script>
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -92,8 +117,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
           deferredPrompt = null;
         });
       } else {
-        toast('To install: Tap your browser menu (⋮) and select "Add to Home Screen"');
+        document.getElementById('pwaInstructionModal').style.display = 'flex';
       }
+    }
+
+    function closePwaInstructionModal() {
+      document.getElementById('pwaInstructionModal').style.display = 'none';
     }
 
     function dismissPwaBanner() {
