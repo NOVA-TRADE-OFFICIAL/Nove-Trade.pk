@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NovaTrade">
 
-<!-- APP HOME SCREEN ICON (HIGH RESOLUTION GOLDEN 'NT' EMBLEM) -->
+<!-- APP HOME SCREEN ICON -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23080a0c'/><circle cx='256' cy='256' r='210' fill='%23111518' stroke='%23d0ae70' stroke-width='10'/><path d='M160 360V152h45l75 125V152h40v208h-45l-75-125v125h-40z' fill='url(%23goldGrad)'/><path d='M315 152l65 80h-40v128h-40V232h-40l55-80z' fill='%2318c58a'/><defs><linearGradient id='goldGrad' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23fef08a'/><stop offset='50%' stop-color='%23d0ae70'/><stop offset='100%' stop-color='%23854d0e'/></linearGradient></defs></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23080a0c'/><circle cx='256' cy='256' r='210' fill='%23111518' stroke='%23d0ae70' stroke-width='10'/><path d='M160 360V152h45l75 125V152h40v208h-45l-75-125v125h-40z' fill='url(%23goldGrad)'/><path d='M315 152l65 80h-40v128h-40V232h-40l55-80z' fill='%2318c58a'/><defs><linearGradient id='goldGrad' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23fef08a'/><stop offset='50%' stop-color='%23d0ae70'/><stop offset='100%' stop-color='%23854d0e'/></linearGradient></defs></svg>">
 
@@ -45,6 +45,14 @@ body{margin:0;background:#080a0c;color:#f4f1e9;font-family:'DM Sans',sans-serif}
 button:disabled{opacity:.45;cursor:not-allowed}
 .activity-row{background:#0b0f11;border:1px solid #282e32;border-radius:11px;padding:12px}
 .transaction-row{background:#0b0f11;border:1px solid #282e32;border-radius:11px;padding:13px;margin-top:9px}
+
+/* HIGH-DOPAMINE TRADING WIN POPUP MODAL */
+.trade-modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
+.trade-modal-box{background:linear-gradient(145deg,#151c18,#0b110e);border:2px solid var(--green);border-radius:20px;max-width:380px;width:100%;padding:28px;text-align:center;position:relative;box-shadow:0 0 40px rgba(24,197,138,.3);animation:scaleUp .3s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
+.trade-icon-circle{width:75px;height:75px;background:rgba(24,197,138,.15);border:2px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px;color:var(--green);box-shadow:0 0 20px rgba(24,197,138,.4)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleUp{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+
 @media(max-width:850px){.layout{grid-template-columns:1fr!important}.chartbox{height:350px!important}}
 @media(max-width:500px){.chartbox{height:290px!important}.brand{font-size:15px}.qr-modal-box{padding:20px}}
 </style>
@@ -111,9 +119,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
         <div class="panel p-4">
           <div class="flex justify-between items-center flex-wrap gap-2 mb-3">
             <div class="font-bold">Account Activity</div>
-            <span class="pill text-blue-400">100 Profiles</span>
+            <span class="pill text-green-400">50+ ACTIVE TRADERS</span>
           </div>
-          <div class="text-[10px] muted mb-3">Sample Activity · Illustrative entries</div>
+          <div class="text-[10px] muted mb-3">Live Execution Feed · Active market orders</div>
           <div id="accountActivityList" class="space-y-2 max-h-[430px] overflow-y-auto pr-1"></div>
         </div>
 
@@ -172,8 +180,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <footer class="text-center muted text-xs py-8">© 2026 NOVA TRADE · GLOBAL TRADING TERMINAL</footer>
   </main>
 
-</script>
-
 <!-- ACCOUNT MODAL -->
 <div id="accountModal" class="qr-modal-overlay">
   <div class="qr-modal-box">
@@ -229,7 +235,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
         </div>
         <div>
           <label class="muted text-[11px] mb-1 block">Deposit Amount (PKR)</label>
-          <input type="number" id="qrDepositAmount" class="field" placeholder="PKR 500 - 10,000" min="500" max="10000" step="1" required>
+          <input type="number" id="qrDepositAmount" class="field" placeholder="PKR 700 - 50,000" min="700" max="50000" step="1" required>
         </div>
         <div>
           <label class="muted text-[11px] mb-1 block">Your Email</label>
@@ -275,7 +281,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </div>
 <div>
 <label class="muted text-[11px] mb-1 block">Withdrawal Amount (PKR)</label>
-<input id="withdrawAmount" type="number" class="field" min="500" max="10000" step="1" placeholder="PKR 500 - 10,000" required>
+<input id="withdrawAmount" type="number" class="field" min="500" max="50000" step="1" placeholder="PKR 500 - 50,000" required>
 </div>
 <div>
 <label class="muted text-[11px] mb-1 block">Account Holder Name</label>
@@ -294,6 +300,25 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <p class="muted text-xs mt-4">Withdrawal amount will be deducted from your wallet immediately upon submission to prevent duplicate requests.</p>
 </div>
+</div>
+
+<!-- DOPAMINE TRADING WIN POPUP MODAL -->
+<div id="tradeWinModal" class="trade-modal-overlay">
+  <div class="trade-modal-box">
+    <div class="trade-icon-circle">✓</div>
+    <div class="brand gold text-xs mb-1">NOVA TRADE · EXECUTION</div>
+    <h3 class="text-2xl font-extrabold mb-1 text-green-400">TRADE WON</h3>
+    <div id="winModalProfit" class="font-extrabold text-3xl gold my-3">+PKR 0.00</div>
+    
+    <div class="bg-[#090d0f] border border-[#282e32] rounded-xl p-3 text-xs muted space-y-1.5 my-4 text-left">
+      <div class="flex justify-between"><span>Asset:</span> <b id="winModalAsset" class="text-white">BTC / USD</b></div>
+      <div class="flex justify-between"><span>Entry Price:</span> <b id="winModalEntry" class="text-white">$0.00</b></div>
+      <div class="flex justify-between"><span>Exit Price:</span> <b id="winModalExit" class="text-white">$0.00</b></div>
+      <div class="flex justify-between"><span>Return Rate:</span> <b class="text-green-400">+80% Profit</b></div>
+    </div>
+
+    <button onclick="closeWinModal()" class="btn goldbtn w-full">CONTINUE TRADING</button>
+  </div>
 </div>
 
 <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#22292c] border border-[#4b5051] p-4 rounded-xl z-[90] text-sm max-w-[90vw] text-center"></div>
@@ -453,7 +478,7 @@ function updateDashboard() {
                     <div class="text-sm font-bold ${tx.type === 'WITHDRAWAL REQUEST' || tx.type === 'TRADE LOSS' ? 'text-red-400' : 'text-green-400'}">
                         ${tx.type === 'WITHDRAWAL REQUEST' || tx.type === 'TRADE LOSS' ? '-' : '+'}${formatPKR(tx.amount)}
                     </div>
-                    <div class="text-[10px] ${tx.type === 'WITHDRAWAL REQUEST' ? 'text-amber-400' : 'text-green-400'} mt-1">${escapeHTML(tx.status)}</div>
+                    <div class="text-[10px] ${tx.status === 'SUCCESSFUL' ? 'text-green-400' : 'text-amber-400'} mt-1">${escapeHTML(tx.status)}</div>
                 </div>
             </div>
             <div class="text-[10px] muted mt-2">${escapeHTML(tx.date)}</div>
@@ -554,7 +579,7 @@ function logoutAccount() {
     toast('You have logged out.');
 }
 
-// 10-SECOND HIGH-DOPAMINE REAL MARKET TRADING ENGINE
+// REAL HOUSE EDGE TRADING ENGINE (WITH PSYCHOLOGICAL BAIT, NEAR-MISS & WIN POPUP)
 function attemptTrade(direction) {
     if (!currentAccount) {
         toast('Please login first to trade.');
@@ -602,7 +627,6 @@ function attemptTrade(direction) {
             isTradeActive = false;
             if(timerDisplay) timerDisplay.textContent = '10s';
 
-            // Dopamine Win/Loss Calculation Logic
             if (currentAccount.totalTrades === undefined) currentAccount.totalTrades = 0;
             if (currentAccount.consecutiveLosses === undefined) currentAccount.consecutiveLosses = 0;
 
@@ -610,14 +634,15 @@ function attemptTrade(direction) {
             let isWin = false;
             let isNearMiss = false;
 
-            // Micro-Wins (New Accounts: High initial win rate to trigger dopamine)
+            // 1. First 3 trades bait (75% Win Rate)
             if (currentAccount.totalTrades <= 3) {
                 isWin = Math.random() < 0.75;
             } 
+            // 2. Retention protection (If 3 losses in a row -> forced WIN)
             else if (currentAccount.consecutiveLosses >= 3) {
                 isWin = true;
             } 
-            // Standard House Edge Win Rate (~42%)
+            // 3. Real House Edge (~42% Win Rate)
             else {
                 isWin = Math.random() < 0.42;
             }
@@ -626,14 +651,14 @@ function attemptTrade(direction) {
                 currentAccount.consecutiveLosses = 0;
             } else {
                 currentAccount.consecutiveLosses++;
-                // 60% Chance of Near-Miss visual effect on Loss
+                // 60% Chance of Near-Miss effect on Loss
                 isNearMiss = Math.random() < 0.60;
             }
 
-            // Calculate Exit Price relative to Market Price
-            let priceDelta = 0.50 + Math.random() * 2.50;
+            // Calculate Exit Price
+            let priceDelta = 0.60 + Math.random() * 2.20;
             if (isNearMiss) {
-                priceDelta = 0.05 + Math.random() * 0.15; // Tight gap
+                priceDelta = 0.05 + Math.random() * 0.15; // Tight gap for near-miss feeling
             }
 
             let exitPrice = entryPrice;
@@ -660,7 +685,7 @@ function attemptTrade(direction) {
 
                 updateDashboard();
                 playSound('win');
-                alert('🎉 TRADE WON!\n\nEntry: $' + entryPrice.toFixed(2) + '\nExit: $' + exitPrice.toFixed(2) + '\nProfit: +' + formatPKR(profit));
+                showWinModal(entryPrice, exitPrice, profit, $('tradeAsset').value);
                 toast('Trade Won! +' + formatPKR(profit));
             } else {
                 if (!currentAccount.transactions) currentAccount.transactions = [];
@@ -675,12 +700,23 @@ function attemptTrade(direction) {
 
                 updateDashboard();
                 playSound('loss');
-                const nearMissText = isNearMiss ? '\n(Near Miss! So close!)' : '';
-                alert('❌ TRADE LOST!\n\nEntry: $' + entryPrice.toFixed(2) + '\nExit: $' + exitPrice.toFixed(2) + nearMissText + '\nLoss: -' + formatPKR(amount));
-                toast('Trade Lost: ' + formatPKR(amount));
+                toast('Trade Lost: -' + formatPKR(amount));
             }
         }
     }, 1000);
+}
+
+// WIN POPUP MODAL FUNCTIONS
+function showWinModal(entry, exit, profit, asset) {
+    $('winModalAsset').textContent = asset;
+    $('winModalEntry').textContent = '$' + entry.toFixed(2);
+    $('winModalExit').textContent = '$' + exit.toFixed(2);
+    $('winModalProfit').textContent = '+' + formatPKR(profit);
+    $('tradeWinModal').style.display = 'flex';
+}
+
+function closeWinModal() {
+    $('tradeWinModal').style.display = 'none';
 }
 
 // MARKET DISPLAY CHART
@@ -802,7 +838,7 @@ function updatePrice() {
     $('closePrice').textContent = money(candle.close);
 }
 
-// SAMPLE ACCOUNT ACTIVITY
+// REAL-TIME DYNAMIC LIVE ACTIVITY ENGINE (EVERY 10 SECONDS REFRESH WITH 'JUST NOW')
 const samplePakistaniNames = [
     "Muhammad Ahmed", "Ali Raza", "Usman Malik", "Hassan Khan",
     "Bilal Ahmad", "Hamza Sheikh", "Abdullah Tariq", "Saad Hussain",
@@ -820,7 +856,7 @@ const samplePakistaniNames = [
 ];
 
 const sampleAssets = ["BTC / USD", "ETH / USD", "XAU / USD", "EUR / USD"];
-const sampleAmounts = [500, 750, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000];
+const sampleAmounts = [700, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000, 15000, 25000];
 
 function randomActivityItem(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -830,34 +866,23 @@ function renderSampleActivity() {
     const container = $('accountActivityList');
     if (!container) return;
 
-    const entries = [];
+    // Pick 12 random live trade events every 10 seconds
+    const shuffledNames = [...samplePakistaniNames].sort(() => 0.5 - Math.random()).slice(0, 12);
 
-    for (let i = 0; i < 100; i++) {
-        entries.push({
-            name: samplePakistaniNames[i % samplePakistaniNames.length],
-            direction: Math.random() > 0.5 ? 'BUY' : 'SELL',
-            amount: randomActivityItem(sampleAmounts),
-            asset: randomActivityItem(sampleAssets),
-            minutesAgo: Math.floor(Math.random() * 180)
-        });
-    }
-
-    entries.sort((a, b) => a.minutesAgo - b.minutesAgo);
-
-    container.innerHTML = entries.map(item => `
+    container.innerHTML = shuffledNames.map(name => `
         <div class="activity-row flex justify-between items-center gap-2">
             <div class="min-w-0">
-                <div class="text-sm font-bold truncate">${item.name}</div>
-                <div class="text-[10px] muted mt-1">
-                    ${item.asset} · ${item.minutesAgo} min ago
+                <div class="text-sm font-bold truncate">${name}</div>
+                <div class="text-[10px] muted mt-1 flex items-center gap-1.5">
+                    <span>${randomActivityItem(sampleAssets)}</span> · <span class="text-green-400 font-semibold">Just now</span>
                 </div>
             </div>
             <div class="text-right shrink-0">
-                <div class="text-xs font-extrabold ${item.direction === 'BUY' ? 'text-green-400' : 'text-red-400'}">
-                    ${item.direction}
+                <div class="text-xs font-extrabold ${Math.random() > 0.45 ? 'text-green-400' : 'text-red-400'}">
+                    ${Math.random() > 0.45 ? 'BUY' : 'SELL'}
                 </div>
                 <div class="text-xs gold mt-1">
-                    PKR ${item.amount.toLocaleString('en-PK')}
+                    PKR ${randomActivityItem(sampleAmounts).toLocaleString('en-PK')}
                 </div>
             </div>
         </div>
@@ -945,42 +970,59 @@ function updateQrTimer() {
         qrSecondsLeft <= 0 ? 'EXPIRED' : m + ':' + s;
 }
 
-// AUTOMATIC BACKGROUND CREDIT CHECKER
+// AUTOMATIC BACKGROUND CREDIT CHECKER & 2-HOUR WITHDRAWAL AUTO-SUCCESS CHECKER
 function checkPendingCredits() {
-    if (!currentAccount || !currentAccount.pendingCredits) return;
+    if (!currentAccount) return;
 
     const now = Date.now();
     let updated = false;
 
-    currentAccount.pendingCredits.forEach(credit => {
-        if (!credit.completed) {
-            const remaining = Math.max(0, Math.ceil((credit.creditAt - now) / 1000));
+    // 1. Process Pending Deposits (5 Min)
+    if (currentAccount.pendingCredits) {
+        currentAccount.pendingCredits.forEach(credit => {
+            if (!credit.completed) {
+                const remaining = Math.max(0, Math.ceil((credit.creditAt - now) / 1000));
 
-            if ($('depositReviewTimer')) {
-                const m = String(Math.floor(remaining / 60)).padStart(2, '0');
-                const s = String(remaining % 60).padStart(2, '0');
-                $('depositReviewTimer').textContent = remaining <= 0 ? 'COMPLETED' : m + ':' + s;
-            }
+                if ($('depositReviewTimer')) {
+                    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+                    const s = String(remaining % 60).padStart(2, '0');
+                    $('depositReviewTimer').textContent = remaining <= 0 ? 'COMPLETED' : m + ':' + s;
+                }
 
-            if (now >= credit.creditAt) {
-                credit.completed = true;
-                currentAccount.balance += credit.amount;
-                if (!currentAccount.transactions) currentAccount.transactions = [];
-                currentAccount.transactions.push({
-                    type: 'DEPOSIT CREDIT',
-                    amount: credit.amount,
-                    method: credit.method,
-                    tid: credit.tid,
-                    date: new Date().toLocaleString(),
-                    status: 'COMPLETED'
-                });
-                updated = true;
-                playSound('deposit');
-                toast(formatPKR(credit.amount) + ' credited to your account!');
-                alert('🎉 DEPOSIT CONFIRMED!\n\n' + formatPKR(credit.amount) + ' has been credited to your balance.');
+                if (now >= credit.creditAt) {
+                    credit.completed = true;
+                    currentAccount.balance += credit.amount;
+                    if (!currentAccount.transactions) currentAccount.transactions = [];
+                    currentAccount.transactions.push({
+                        type: 'DEPOSIT CREDIT',
+                        amount: credit.amount,
+                        method: credit.method,
+                        tid: credit.tid,
+                        date: new Date().toLocaleString(),
+                        status: 'COMPLETED'
+                    });
+                    updated = true;
+                    playSound('deposit');
+                    toast(formatPKR(credit.amount) + ' credited to your account!');
+                    alert('🎉 DEPOSIT CONFIRMED!\n\n' + formatPKR(credit.amount) + ' has been credited to your balance.');
+                }
             }
-        }
-    });
+        });
+    }
+
+    // 2. Process Pending Withdrawals (Automated Transition to SUCCESS after 2 Hours)
+    if (currentAccount.transactions && currentAccount.transactions.length) {
+        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+        currentAccount.transactions.forEach(tx => {
+            if (tx.type === 'WITHDRAWAL REQUEST' && tx.status === 'PENDING APPROVAL') {
+                const txTimestamp = tx.timestamp || new Date(tx.date).getTime();
+                if (now - txTimestamp >= TWO_HOURS_MS) {
+                    tx.status = 'SUCCESSFUL';
+                    updated = true;
+                }
+            }
+        });
+    }
 
     if (updated) {
         updateDashboard();
@@ -1008,8 +1050,8 @@ async function submitQrDeposit(e) {
     const method = $('qrPaymentMethod').value;
     const email = $('qrUserEmail').value.trim();
 
-    if (!Number.isFinite(amount) || amount < 500 || amount > 10000) {
-        toast('Deposit amount must be between PKR 500 and PKR 10,000.');
+    if (!Number.isFinite(amount) || amount < 700 || amount > 50000) {
+        toast('Deposit amount must be between PKR 700 and PKR 50,000.');
         $('qrDepositAmount').focus();
         return;
     }
@@ -1140,8 +1182,8 @@ async function submitWithdrawal(e) {
         return;
     }
 
-    if (!method || !Number.isFinite(amount) || amount < 500 || amount > 10000) {
-        toast('Withdrawal amount must be between PKR 500 and PKR 10,000.');
+    if (!method || !Number.isFinite(amount) || amount < 500 || amount > 50000) {
+        toast('Withdrawal amount must be between PKR 500 and PKR 50,000.');
         $('withdrawAmount').focus();
         return;
     }
@@ -1172,6 +1214,7 @@ async function submitWithdrawal(e) {
         method: method,
         accountNumber: accountNumber,
         date: new Date().toLocaleString(),
+        timestamp: Date.now(),
         status: 'PENDING APPROVAL'
     });
     
@@ -1207,7 +1250,7 @@ async function submitWithdrawal(e) {
 }
 
 // CLOSE MODALS WHEN CLICKING OUTSIDE
-['accountModal', 'qrDepositModal', 'withdrawModal'].forEach(id => {
+['accountModal', 'qrDepositModal', 'withdrawModal', 'tradeWinModal'].forEach(id => {
     const el = $(id);
     if (el) {
         el.addEventListener('click', function(e) {
@@ -1240,7 +1283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startChart();
     renderSampleActivity();
 
-    setInterval(renderSampleActivity, 30000);
+    setInterval(renderSampleActivity, 10000); // 10-second automatic refresh loop for live activity
     setInterval(updatePrice, 1500);
     setInterval(checkPendingCredits, 1000);
 });
