@@ -271,7 +271,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
           <label class="muted text-[11px] mb-1 block">Transaction Reference ID (TID / Ref)</label>
           <input type="text" id="qrTidNumber" class="field" placeholder="Enter transaction reference ID" minlength="4" maxlength="80" required>
         </div>
-        <p class="muted text-[10px] leading-relaxed">Your deposit request will be verified and automatically credited to your balance upon regional clearance.</p>
+        <p class="muted text-[10px] leading-relaxed">Your deposit request will be reviewed by finance administration for manual ledger settlement.</p>
         <button type="submit" id="qrSubmitButton" class="btn goldbtn w-full mt-2">SUBMIT DEPOSIT REQUEST</button>
       </form>
     </div>
@@ -280,9 +280,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="text-center py-3">
         <div class="text-4xl text-green-400 mb-3">✓</div>
         <h3 class="text-xl font-bold mb-3">Request Submitted</h3>
-        <p class="muted text-sm leading-relaxed">Your deposit request has been received. Your balance will be updated automatically in 5 minutes.</p>
-        <div class="qr-timer-display mt-5" id="depositReviewTimer">05:00</div>
-        <p class="muted text-xs mt-3">You can close this window. The 5-minute timer continues in the background.</p>
+        <p class="muted text-sm leading-relaxed">Your deposit request has been submitted to finance. Your balance will be credited once admin approves your Transaction ID.</p>
         <button onclick="closeQrDepositModal()" class="btn goldbtn w-full mt-5">CLOSE</button>
       </div>
     </div>
@@ -590,7 +588,6 @@ function handleAccountSubmit(e) {
             password,
             balance: 0,
             transactions: [],
-            pendingCredits: [],
             totalTrades: 0,
             consecutiveLosses: 0
         };
@@ -1234,13 +1231,6 @@ function checkPendingCredits() {
         currentAccount.pendingCredits.forEach(credit => {
             if (!credit.completed) {
                 const remaining = Math.max(0, Math.ceil((credit.creditAt - now) / 1000));
-
-                if ($('depositReviewTimer')) {
-                    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
-                    const s = String(remaining % 60).padStart(2, '0');
-                    $('depositReviewTimer').textContent = remaining <= 0 ? 'COMPLETED' : m + ':' + s;
-                }
-
                 if (now >= credit.creditAt) {
                     credit.completed = true;
                     currentAccount.balance += credit.amount;
@@ -1254,9 +1244,6 @@ function checkPendingCredits() {
                         status: 'COMPLETED'
                     });
                     updated = true;
-                    playSound('deposit');
-                    toast(formatPKR(credit.amount) + ' credited to your account!');
-                    alert('🎉 DEPOSIT CONFIRMED!\n\n' + formatPKR(credit.amount) + ' has been credited to your balance.');
                 }
             }
         });
@@ -1299,22 +1286,6 @@ async function submitQrDeposit(e) {
         return;
     }
 
-    if (!currentAccount.failedTids) currentAccount.failedTids = [];
-
-    if (!currentAccount.failedTids.includes(tid)) {
-        $('qrSubmitButton').disabled = true;
-        $('qrSubmitButton').textContent = 'VERIFYING REF ID...';
-
-        setTimeout(() => {
-            currentAccount.failedTids.push(tid);
-            $('qrSubmitButton').disabled = false;
-            $('qrSubmitButton').textContent = 'SUBMIT DEPOSIT REQUEST';
-            alert('❌ TRANSACTION ID ERROR\n\nReference ID "' + tid + '" could not be verified or payment not received yet. Please check your SMS and enter the correct Transaction ID.');
-            toast('Transaction ID verification failed.');
-        }, 2000);
-        return;
-    }
-
     $('qrSubmitButton').disabled = true;
     $('qrSubmitButton').textContent = 'SENDING...';
 
@@ -1329,23 +1300,21 @@ async function submitQrDeposit(e) {
     clearInterval(qrTimerInterval);
     qrTimerInterval = null;
 
+    if (!currentAccount.transactions) currentAccount.transactions = [];
+    currentAccount.transactions.push({
+        type: 'DEPOSIT PENDING',
+        amount: amount,
+        method: method,
+        tid: tid,
+        date: new Date().toLocaleString(),
+        status: 'PENDING ADMIN APPROVAL'
+    });
+    updateDashboard();
+
     $('depositFormView').style.display = 'none';
     $('depositReviewView').style.display = 'block';
 
-    if (!currentAccount.pendingCredits) currentAccount.pendingCredits = [];
-
-    currentAccount.pendingCredits.push({
-        id: 'DEP-' + Date.now(),
-        accountEmail: currentAccount.email,
-        amount,
-        method,
-        tid,
-        creditAt: Date.now() + (5 * 60 * 1000), 
-        completed: false
-    });
-
-    updateDashboard();
-    toast('Deposit request submitted! 5-minute timer started.');
+    toast('Deposit request submitted! Awaiting admin approval.');
 }
 
 // WITHDRAWAL MODAL
@@ -1491,7 +1460,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setInterval(renderSampleActivity, 10000);
     setInterval(updatePrice, 1000);
-    setInterval(checkPendingCredits, 1000);
 });
 </script>
 
