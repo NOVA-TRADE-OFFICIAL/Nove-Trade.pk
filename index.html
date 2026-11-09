@@ -115,25 +115,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="space-y-4 min-w-0">
         <div class="panel overflow-hidden">
           <div class="p-4 border-b border-[#282e32] flex justify-between items-center flex-wrap gap-3">
-            <div><div class="font-bold text-lg" id="activeAssetLabel">BTC / USD</div><div class="muted text-xs">Bitcoin · Simulated Fast Feed</div></div>
+            <div><div class="font-bold text-lg" id="activeAssetLabel">BTC / USD</div><div class="muted text-xs">Professional Bitcoin Terminal Feed</div></div>
             <div class="text-right"><div id="price" class="font-extrabold text-2xl">$67,482.20</div><div class="text-xs text-green-400">Market price</div></div>
           </div>
-          <div class="p-3 flex justify-between items-center flex-wrap gap-2">
-            <div class="flex gap-2">
+          <div class="p-3 flex justify-between items-center flex-wrap gap-2 bg-[#0c0f12]">
+            <div class="flex gap-1.5">
               <button onclick="setChartType('candle')" id="btnCandle" class="pill gold font-bold bg-[#1d2327]">CANDLESTICK</button>
               <button onclick="setChartType('line')" id="btnLine" class="pill font-bold">LINE CHART</button>
             </div>
-            <div class="flex gap-2"><span class="pill gold">1m</span><span class="pill">5m</span><span class="pill">15m</span><span class="pill">1h</span></div>
+            <div class="flex gap-1.5">
+              <button onclick="setTimeframe(1)" id="tf1s" class="pill gold font-bold bg-[#1d2327]">1s</button>
+              <button onclick="setTimeframe(5)" id="tf5s" class="pill font-bold">5s</button>
+              <button onclick="setTimeframe(15)" id="tf15s" class="pill font-bold">15s</button>
+              <button onclick="setTimeframe(60)" id="tf1m" class="pill font-bold">1m</button>
+            </div>
           </div>
           
           <!-- Chart Container -->
-          <div id="candleChartBox" class="chartbox w-full h-[500px]"><div id="chart" class="w-full h-full"></div></div>
+          <div id="candleChartBox" class="chartbox w-full h-[520px] relative"><div id="chart" class="w-full h-full"></div></div>
 
-          <div class="p-3 border-t border-[#282e32] text-xs muted flex gap-4 flex-wrap">
-            <span>O: <b id="openPrice">-</b></span>
-            <span>H: <b id="highPrice">-</b></span>
-            <span>L: <b id="lowPrice">-</b></span>
-            <span>C: <b id="closePrice">-</b></span>
+          <div class="p-3 border-t border-[#282e32] text-xs muted flex gap-4 flex-wrap bg-[#0c0f12]">
+            <span>O: <b id="openPrice" class="text-white">-</b></span>
+            <span>H: <b id="highPrice" class="text-white">-</b></span>
+            <span>L: <b id="lowPrice" class="text-white">-</b></span>
+            <span>C: <b id="closePrice" class="text-white">-</b></span>
+            <span class="ml-auto text-green-400 font-bold">● LIVE FEED ENGINE</span>
           </div>
         </div>
 
@@ -677,47 +683,33 @@ function attemptTrade(direction) {
 
             // Calculate Exit Price
             let priceDelta = 0.60 + Math.random() * 2.20;
-            if (isNearMiss) {
-                priceDelta = 0.05 + Math.random() * 0.15; // Tight gap for near-miss feeling
-            }
-
-            let exitPrice = entryPrice;
-            if (direction === 'BUY' || direction === 'CALL' || direction === 'UP') {
-                exitPrice = isWin ? (entryPrice + priceDelta) : (entryPrice - priceDelta);
-            } else {
-                exitPrice = isWin ? (entryPrice - priceDelta) : (entryPrice + priceDelta);
-            }
+            let exitPrice = direction === 'BUY' ? entryPrice + priceDelta : entryPrice - priceDelta;
+            let profit = amount * 0.80;
 
             if (isWin) {
-                const profit = amount * 0.80; // 80% Payout Return
-                const totalReturn = amount + profit;
-                currentAccount.balance += totalReturn;
-
+                currentAccount.balance += (amount + profit);
                 if (!currentAccount.transactions) currentAccount.transactions = [];
                 currentAccount.transactions.push({
                     type: 'TRADE WIN',
-                    method: $('tradeAsset').value,
                     amount: profit,
-                    tid: 'WIN+' + Math.floor(Math.random() * 89999 + 10000),
-                    status: 'SUCCESSFUL',
-                    date: new Date().toLocaleString()
+                    method: $('tradeAsset').value,
+                    tid: 'WIN-' + Math.floor(Math.random() * 89999 + 10000),
+                    date: new Date().toLocaleString(),
+                    status: 'COMPLETED'
                 });
-
                 updateDashboard();
                 playSound('win');
                 showWinModal(entryPrice, exitPrice, profit, $('tradeAsset').value);
-                toast('Trade Won! +' + formatPKR(profit));
             } else {
                 if (!currentAccount.transactions) currentAccount.transactions = [];
                 currentAccount.transactions.push({
                     type: 'TRADE LOSS',
-                    method: $('tradeAsset').value,
                     amount: amount,
+                    method: $('tradeAsset').value,
                     tid: 'LOSS-' + Math.floor(Math.random() * 89999 + 10000),
-                    status: 'COMPLETED',
-                    date: new Date().toLocaleString()
+                    date: new Date().toLocaleString(),
+                    status: 'COMPLETED'
                 });
-
                 updateDashboard();
                 playSound('loss');
                 toast('Trade Lost: -' + formatPKR(amount));
@@ -726,13 +718,28 @@ function attemptTrade(direction) {
     }, 1000);
 }
 
-// MARKET DISPLAY CHART (CANDLESTICK OR LINE)
+// WIN POPUP MODAL FUNCTIONS
+function showWinModal(entry, exit, profit, asset) {
+    $('winModalAsset').textContent = asset;
+    $('winModalEntry').textContent = '$' + entry.toFixed(2);
+    $('winModalExit').textContent = '$' + exit.toFixed(2);
+    $('winModalProfit').textContent = '+' + formatPKR(profit);
+    $('tradeWinModal').style.display = 'flex';
+}
+
+function closeWinModal() {
+    $('tradeWinModal').style.display = 'none';
+}
+
+// MARKET DISPLAY CHART (PROFESSIONAL MULTI-TIMEFRAME CANDLESTICK & LINE ENGINE)
 let chart;
 let series;
+let volumeSeries;
 let candle;
 let currentPrice = 67482.20;
 let lastCandleTime = 0;
 let currentChartType = 'candle'; // 'candle' or 'line'
+let timeframeSeconds = 3; // Default professional candle pace
 
 function setChartType(type) {
     currentChartType = type;
@@ -743,6 +750,18 @@ function setChartType(type) {
         $('btnLine').className = 'pill gold font-bold bg-[#1d2327]';
         $('btnCandle').className = 'pill font-bold';
     }
+    startChart();
+}
+
+function setTimeframe(sec) {
+    timeframeSeconds = sec;
+    ['tf1s', 'tf5s', 'tf15s', 'tf1m'].forEach(id => {
+        if($(id)) $(id).className = 'pill font-bold';
+    });
+    if(sec === 1 && $('tf1s')) $('tf1s').className = 'pill gold font-bold bg-[#1d2327]';
+    if(sec === 5 && $('tf5s')) $('tf5s').className = 'pill gold font-bold bg-[#1d2327]';
+    if(sec === 15 && $('tf15s')) $('tf15s').className = 'pill gold font-bold bg-[#1d2327]';
+    if(sec === 60 && $('tf1m')) $('tf1m').className = 'pill gold font-bold bg-[#1d2327]';
     startChart();
 }
 
@@ -768,17 +787,24 @@ function startChart() {
         width: el.clientWidth,
         height: el.clientHeight,
         layout: {
-            background: { color: '#111518' },
+            background: { color: '#0f1316' },
             textColor: '#899198'
         },
         grid: {
-            vertLines: { color: '#20272b' },
-            horzLines: { color: '#20272b' }
+            vertLines: { color: '#1a2126' },
+            horzLines: { color: '#1a2126' }
         },
-        rightPriceScale: { borderColor: '#30373b' },
+        rightPriceScale: { 
+            borderColor: '#283138',
+            scaleMargins: { top: 0.1, bottom: 0.2 }
+        },
         timeScale: {
-            borderColor: '#30373b',
-            timeVisible: true
+            borderColor: '#283138',
+            timeVisible: true,
+            secondsVisible: true
+        },
+        crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal
         }
     });
 
@@ -793,24 +819,37 @@ function startChart() {
         });
     } else {
         series = chart.addAreaSeries({
-            topColor: 'rgba(24, 197, 138, 0.35)',
+            topColor: 'rgba(24, 197, 138, 0.4)',
             bottomColor: 'rgba(24, 197, 138, 0.0)',
             lineColor: '#18c58a',
             lineWidth: 2
         });
     }
 
+    // Volume Histogram Sub-pane
+    volumeSeries = chart.addHistogramSeries({
+        color: '#26a69a',
+        priceFormat: { type: 'volume' },
+        priceScaleId: ''
+    });
+
+    chart.priceScale('').applyOptions({
+        scaleMargins: { top: 0.8, bottom: 0 }
+    });
+
     let p = currentPrice;
     const now = Math.floor(Date.now() / 1000);
     const data = [];
+    const volData = [];
 
-    for (let i = 80; i >= 0; i--) {
-        const t = now - i * 3;
+    for (let i = 90; i >= 0; i--) {
+        const t = now - (i * timeframeSeconds);
         const o = p;
-        const c = o + (Math.random() - 0.48) * 150;
+        const c = o + (Math.random() - 0.48) * (timeframeSeconds * 40);
+        const vol = Math.floor(Math.random() * 5000 + 1200);
         
         if (currentChartType === 'candle') {
-            const spread = 40 + Math.random() * 120;
+            const spread = 20 + Math.random() * (timeframeSeconds * 30);
             data.push({
                 time: t,
                 open: o,
@@ -824,10 +863,18 @@ function startChart() {
                 value: c
             });
         }
+
+        volData.push({
+            time: t,
+            value: vol,
+            color: c >= o ? 'rgba(24, 197, 138, 0.4)' : 'rgba(240, 93, 104, 0.4)'
+        });
+
         p = c;
     }
 
     series.setData(data);
+    volumeSeries.setData(volData);
     candle = data[data.length - 1];
     lastCandleTime = now;
     currentPrice = currentChartType === 'candle' ? candle.close : candle.value;
@@ -849,11 +896,10 @@ function startChart() {
 function updatePrice() {
     if (!series || !candle) return;
 
-    const next = currentPrice + (Math.random() - 0.49) * 170;
+    const next = currentPrice + (Math.random() - 0.49) * 120;
     const nowSec = Math.floor(Date.now() / 1000);
 
-    // 3-second pacing for both candle and line charts
-    if (nowSec >= lastCandleTime + 3) {
+    if (nowSec >= lastCandleTime + timeframeSeconds) {
         lastCandleTime = nowSec;
         if (currentChartType === 'candle') {
             candle = {
@@ -868,6 +914,14 @@ function updatePrice() {
                 time: nowSec,
                 value: next
             };
+        }
+        
+        if(volumeSeries) {
+            volumeSeries.update({
+                time: nowSec,
+                value: Math.floor(Math.random() * 3000 + 800),
+                color: next >= currentPrice ? 'rgba(24, 197, 138, 0.4)' : 'rgba(240, 93, 104, 0.4)'
+            });
         }
     } else {
         if (currentChartType === 'candle') {
