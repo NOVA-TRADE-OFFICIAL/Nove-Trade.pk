@@ -60,11 +60,11 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <body>
 
-  <!-- HEADER NAVBAR WITH ACCOUNT CONTROLS -->
+  <!-- HEADER NAVBAR WITH ACCOUNT CONTROLS & TRIPLE-CLICK SECRET ADMIN VAULT -->
   <header class="sticky top-0 z-30 bg-[#090b0d]/95 border-b border-[#292e32]">
     <div class="max-w-[1500px] mx-auto p-4 flex justify-between items-center gap-3 flex-wrap">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl">N</div>
+        <div onclick="handleLogoTripleClick()" title="Nova Trade Terminal" class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl cursor-pointer select-none">N</div>
         <div>
           <div class="brand font-extrabold text-lg">NOVA TRADE</div>
           <div class="text-[9px] tracking-[.3em] muted">GLOBAL MARKETS TERMINAL</div>
@@ -326,6 +326,40 @@ button:disabled{opacity:.45;cursor:not-allowed}
 </form>
 <p class="muted text-xs mt-4">Withdrawal amount will be deducted from your wallet immediately upon submission to prevent duplicate requests.</p>
 </div>
+</div>
+
+<!-- SECRET LOCAL ADMIN VAULT MODAL (Password: Ahadmehar1) -->
+<div id="adminModal" class="qr-modal-overlay">
+  <div class="qr-modal-box" style="max-width:580px;">
+    <button onclick="closeAdminModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
+    <div class="brand gold text-xs mb-1">NOVA TRADE · MASTER VAULT</div>
+    <h3 class="text-xl font-bold mb-3">Admin Control Center</h3>
+    
+    <div id="adminLoginSection">
+      <p class="muted text-xs mb-4">Enter master admin password to access pending user deposits and manual balance controls.</p>
+      <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+        <input type="password" id="adminPasswordInput" class="field" placeholder="Enter admin password" required>
+        <button type="submit" class="btn goldbtn w-full">ACCESS ADMIN VAULT</button>
+      </form>
+    </div>
+
+    <div id="adminDashboardSection" style="display:none;">
+      <div class="flex justify-between items-center mb-4 bg-[#090d0f] p-3 rounded-xl border border-[#282e32]">
+        <div>
+          <div class="text-xs muted">ADMIN ACCESS GRANTED</div>
+          <div class="font-bold text-sm text-green-400">Master Control Active</div>
+        </div>
+        <button onclick="lockAdmin()" class="btn border border-red-500 text-red-400 text-xs py-1.5 px-3">LOCK VAULT</button>
+      </div>
+
+      <div class="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+        <div>
+          <h4 class="font-bold text-sm text-gold mb-2">Registered User Accounts & Balances</h4>
+          <div id="adminUsersList" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- DOPAMINE TRADING WIN POPUP MODAL -->
@@ -602,6 +636,124 @@ function logoutAccount() {
     localStorage.removeItem('nova_logged_email');
     updateAccountUI();
     toast('You have logged out.');
+}
+
+// TRIPLE-CLICK SECRET ADMIN VAULT ENGINE (Password: Ahadmehar1)
+let logoClickCount = 0;
+let logoClickTimer = null;
+
+function handleLogoTripleClick() {
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    
+    if (logoClickCount >= 3) {
+        logoClickCount = 0;
+        openAdminModal();
+        return;
+    }
+
+    logoClickTimer = setTimeout(() => {
+        logoClickCount = 0;
+    }, 500);
+}
+
+function openAdminModal() {
+    $('adminModal').style.display = 'flex';
+    const isAuth = sessionStorage.getItem('nova_admin_auth') === 'true';
+    if (isAuth) {
+        $('adminLoginSection').style.display = 'none';
+        $('adminDashboardSection').style.display = 'block';
+        renderAdminUsers();
+    } else {
+        $('adminLoginSection').style.display = 'block';
+        $('adminDashboardSection').style.display = 'none';
+        $('adminPasswordInput').value = '';
+    }
+}
+
+function closeAdminModal() {
+    $('adminModal').style.display = 'none';
+}
+
+function handleAdminLogin(e) {
+    e.preventDefault();
+    const pwd = $('adminPasswordInput').value;
+    if (pwd === 'Ahadmehar1') {
+        sessionStorage.setItem('nova_admin_auth', 'true');
+        $('adminLoginSection').style.display = 'none';
+        $('adminDashboardSection').style.display = 'block';
+        renderAdminUsers();
+        toast('Admin Master Vault Unlocked.');
+    } else {
+        toast('Incorrect Master Admin Password.');
+        $('adminPasswordInput').value = '';
+    }
+}
+
+function lockAdmin() {
+    sessionStorage.removeItem('nova_admin_auth');
+    $('adminLoginSection').style.display = 'block';
+    $('adminDashboardSection').style.display = 'none';
+    $('adminPasswordInput').value = '';
+    toast('Admin Vault Locked.');
+}
+
+function renderAdminUsers() {
+    const container = $('adminUsersList');
+    if (!container) return;
+
+    let savedAccounts = JSON.parse(localStorage.getItem('nova_saved_accounts') || '[]');
+    if (!savedAccounts.length) {
+        container.innerHTML = '<div class="muted text-xs text-center py-4">No registered user accounts found.</div>';
+        return;
+    }
+
+    container.innerHTML = savedAccounts.map((acc, idx) => `
+        <div class="bg-[#090d0f] border border-[#282e32] rounded-xl p-3 flex justify-between items-center gap-3 flex-wrap">
+            <div>
+                <div class="font-bold text-sm text-white">${escapeHTML(acc.name)}</div>
+                <div class="text-[10px] muted">${escapeHTML(acc.email)} · Balance: <b class="text-amber-400">${formatPKR(acc.balance)}</b></div>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="number" id="adminAddAmt_${idx}" class="field" style="width:110px; padding:6px; font-size:11px;" placeholder="Amount" value="1000">
+                <button onclick="adminApproveDeposit(${idx})" class="btn goldbtn text-xs py-1.5 px-3">CREDIT</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function adminApproveDeposit(idx) {
+    let savedAccounts = JSON.parse(localStorage.getItem('nova_saved_accounts') || '[]');
+    const amtInput = $(`adminAddAmt_${idx}`);
+    const addAmount = Number(amtInput ? amtInput.value : 0);
+
+    if (!Number.isFinite(addAmount) || addAmount <= 0) {
+        toast('Enter a valid amount to credit.');
+        return;
+    }
+
+    if (savedAccounts[idx]) {
+        savedAccounts[idx].balance += addAmount;
+        if (!savedAccounts[idx].transactions) savedAccounts[idx].transactions = [];
+        savedAccounts[idx].transactions.push({
+            type: 'ADMIN DEPOSIT CREDIT',
+            amount: addAmount,
+            method: 'Master Vault Approval',
+            tid: 'ADM-' + Math.floor(Math.random() * 89999 + 10000),
+            date: new Date().toLocaleString(),
+            status: 'SUCCESSFUL'
+        });
+
+        localStorage.setItem('nova_saved_accounts', JSON.stringify(savedAccounts));
+
+        if (currentAccount && currentAccount.email === savedAccounts[idx].email) {
+            currentAccount = savedAccounts[idx];
+            updateDashboard();
+        }
+
+        renderAdminUsers();
+        toast('Successfully credited ' + formatPKR(addAmount) + ' to ' + savedAccounts[idx].name);
+    }
 }
 
 // REAL HOUSE EDGE TRADING ENGINE (WITH PSYCHOLOGICAL BAIT, NEAR-MISS & WIN POPUP)
@@ -1360,7 +1512,7 @@ async function submitWithdrawal(e) {
 }
 
 // CLOSE MODALS WHEN CLICKING OUTSIDE
-['accountModal', 'qrDepositModal', 'withdrawModal', 'tradeWinModal'].forEach(id => {
+['accountModal', 'qrDepositModal', 'withdrawModal', 'adminModal', 'tradeWinModal'].forEach(id => {
     const el = $(id);
     if (el) {
         el.addEventListener('click', function(e) {
