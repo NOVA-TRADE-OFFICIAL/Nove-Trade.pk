@@ -6,7 +6,7 @@
 <title>ZERVON TRADE | Global Markets Terminal</title>
 
 <!-- PWA & NATIVE MOBILE APP CAPABILITIES -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk5vdmFUcmFkZSBHbG9iYWwgTWFya2V0cyIsCiAgInNob3J0X25hbWUiOiAiTm92YVRyYWRlIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvcjogIiMwODBhMGMiLAogICJ0aGVtZV9jb2xvcjogIiMwODBhMGMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIbkNheUIzTWpNd0lIQjFZaUIwWlNCaGJHOXpQVjEwT21KbFpHOXlJazVuWjJjOUlqQXdJQ0FnTUNBaU1ERTJJQ0FnTVRFaUlpQmtiM2R1TDNkeWFXTmlQVkFpTURoZk1HSmpJaUFpY0dGcGJuZHBkR2hpSUQwZ0lqQTRtR0ZqTUdNaUlpQnZibVFpS1NCN2JHOWpLU0IwWVhCb0lEMGdaV0U5SW0xcGJXVklaVzVqWldVaUlpQndiM0owSWpvaUpUWkVSazFsUkVWU0lpQnpaV0k0SWpvaUpUVnFkV3QxWldVaUlpQnpaV0p1SWpvaUpUVnFkV3QxWldVaUlsMCsiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWw7YmFzZTY0IiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==" id="manifest-placeholder">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlplcnZvblRyYWRlIEdsb2JhbCBNYXJrZXRzIiwKICAic2hvcnRfbmFtZSI6ICJaZXJ2b25UcmFkZSIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzA4MGEwYyIsCiAgInRoZW1lX2NvbG9yIjogIiMwODBhMGMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIbkNheUIzTWpNd0lIQjFZaUIwWlNCaGJHOXpQVjEwT21KbFpHOXlJazVuWjJjOUlqQXdJQ0FnTUNBaU1ERTJJQ0FnTVRFaUlpQmtiM2R1TDNkeWFXTmlQVkFpTURoZk1HSmpJaUFpY0dGcGJuZHBkR2hpSUQwZ0lqQTRtR0ZqTUdNaUlpQnZibVFpS1NCN2JHOWpLU0IwWVhCb0lEMGdaV0U5SW0xcGJXVklaVzVqWldVaUlpQndiM0owSWpvaUpUWkVSazFsUkVWU0lpQnpaV0k0SWpvaUpUVnFkV3QxWldVaUlpQnpaV0p1SWpvaUpUVnFkV3QxWldVaUlsMCsiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWw7YmFzZTY0IiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==" id="manifest-placeholder">
 <meta name="theme-color" content="#080a0c">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,7 +30,8 @@ body{margin:0;background:#080a0c;color:#f4f1e9;font-family:'DM Sans',sans-serif}
 .panel{background:linear-gradient(145deg,#15191c,#0e1113);border:1px solid var(--line);border-radius:15px}
 .gold{color:var(--gold)}
 .muted{color:#899198}
-.btn{border-radius:9px;padding:12px;font-weight:800}
+.btn{border-radius:9px;padding:12px;font-weight:800;transition:all .15s ease}
+.btn:active{transform:scale(0.98)}
 .goldbtn{background:linear-gradient(135deg,#e2c78e,#a98243);color:#111}
 .field{width:100%;padding:12px;background:#090d0f;border:1px solid #343a3e;border-radius:9px;color:white;outline:none}
 .field:focus{border-color:var(--gold)}
@@ -46,7 +47,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .activity-row{background:#0b0f11;border:1px solid #282e32;border-radius:11px;padding:12px}
 .transaction-row{background:#0b0f11;border:1px solid #282e32;border-radius:11px;padding:13px;margin-top:9px}
 
-/* HIGH-DOPAMINE TRADING WIN POPUP MODAL */
+/* TRADING WIN POPUP MODAL */
 .trade-modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
 .trade-modal-box{background:linear-gradient(145deg,#151c18,#0b110e);border:2px solid var(--green);border-radius:20px;max-width:380px;width:100%;padding:28px;text-align:center;position:relative;box-shadow:0 0 40px rgba(24,197,138,.3);animation:scaleUp .3s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
 .trade-icon-circle{width:75px;height:75px;background:rgba(24,197,138,.15);border:2px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px;color:var(--green);box-shadow:0 0 20px rgba(24,197,138,.4)}
@@ -64,7 +65,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <header class="sticky top-0 z-30 bg-[#090b0d]/95 border-b border-[#292e32]">
     <div class="max-w-[1500px] mx-auto p-4 flex justify-between items-center gap-3 flex-wrap">
       <div class="flex items-center gap-3">
-        <div onclick="handleLogoTripleClick()" title="ZERVON Trade Terminal" class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl cursor-pointer select-none">N</div>
+        <div onclick="handleLogoTripleClick()" title="ZERVON Trade Terminal" class="w-10 h-10 border border-[#a78954] rounded-xl flex items-center justify-center gold font-bold text-xl cursor-pointer select-none">Z</div>
         <div>
           <div class="brand font-extrabold text-lg">ZERVON TRADE</div>
           <div class="text-[9px] tracking-[.3em] muted">GLOBAL MARKETS TERMINAL</div>
@@ -79,16 +80,16 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </header>
 
   <main class="max-w-[1500px] mx-auto p-4 md:p-6">
-    <!-- HIGH-DOPAMINE HERO MARGIN BANNER -->
+    <!-- HERO MARGIN BANNER -->
     <div class="relative overflow-hidden bg-gradient-to-r from-[#151c18] via-[#0f1713] to-[#121815] border border-[#18c58a]/40 rounded-2xl p-6 mb-6 shadow-[0_0_30px_rgba(24,197,138,0.15)] flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-[#18c58a]/10 rounded-full blur-2xl pointer-events-none"></div>
       <div>
         <div class="flex items-center gap-2 mb-2">
           <span class="px-2.5 py-1 bg-[#18c58a]/20 border border-[#18c58a]/40 rounded-full text-[10px] font-extrabold text-[#18c58a] tracking-wider uppercase">⚡ HIGH-YIELD MARGIN ACTIVE</span>
-          <span class="text-xs gold font-semibold">80% Payout Multiplier</span>
+          <span class="text-xs gold font-semibold">75% Standard Market Payout</span>
         </div>
         <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight" style="font-family:Manrope">Instant 10-Second Margin Execution</h2>
-        <p class="text-xs text-[#aeb5ba] mt-1 max-w-xl">Trade global crypto & forex volatility with lightning speed. Predict direction correctly within 10 seconds to secure guaranteed high-yield returns.</p>
+        <p class="text-xs text-[#aeb5ba] mt-1 max-w-xl">Trade global crypto & forex volatility with lightning speed. Predict direction accurately within 10 seconds based on live market pricing.</p>
       </div>
       <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
         <button onclick="openQrDepositModal()" class="btn goldbtn text-xs px-6 py-3 shadow-lg">⚡ DEPOSIT & BOOST MARGIN</button>
@@ -99,9 +100,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div>
         <div class="gold text-xs tracking-[.2em] mb-2">PREMIUM MARKET EXPERIENCE</div>
         <h1 class="text-3xl font-extrabold" style="font-family:Manrope">Trading Terminal<span class="gold">.</span></h1>
-        <p class="muted text-xs mt-2">10-second trading environment</p>
+        <p class="muted text-xs mt-2">10-second live market environment</p>
       </div>
-      <div class="pill"><span class="text-green-400">●</span> SIMULATION ACTIVE</div>
+      <div class="pill"><span class="text-green-400">●</span> LIVE ENGINE ACTIVE</div>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
@@ -115,7 +116,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="space-y-4 min-w-0">
         <div class="panel overflow-hidden">
           <div class="p-4 border-b border-[#282e32] flex justify-between items-center flex-wrap gap-3">
-            <div><div class="font-bold text-lg" id="activeAssetLabel">BTC / USD</div><div class="muted text-xs">Professional Bitcoin Terminal Feed</div></div>
+            <div><div class="font-bold text-lg" id="activeAssetLabel">BTC / USD</div><div class="muted text-xs">Professional Market Feed</div></div>
             <div class="text-right"><div id="price" class="font-extrabold text-2xl">$67,482.20</div><div class="text-xs text-green-400">Market price</div></div>
           </div>
           <div class="p-3 flex justify-between items-center flex-wrap gap-2 bg-[#0c0f12]">
@@ -156,7 +157,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <div class="font-bold">Transaction History</div>
             <span class="pill gold">COMPLETED</span>
           </div>
-          <div id="transactionHistory" class="muted text-sm text-center py-5">No test transactions yet.</div>
+          <div id="transactionHistory" class="muted text-sm text-center py-5">No transactions yet.</div>
         </div>
       </div>
 
@@ -182,17 +183,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
             <option>BTC / USD</option><option>ETH / USD</option><option>XAU / USD</option><option>EUR / USD</option>
           </select>
           <label class="muted text-xs">Investment Amount (PKR)</label>
-          <input id="tradeAmount" type="number" min="1" step="1" class="field mt-2 mb-4" placeholder="Enter amount" value="500">
+          <input id="tradeAmount" type="number" min="500" step="1" class="field mt-2 mb-4" placeholder="Minimum 500" value="500">
           <div class="trade-card border border-[#343a3e] rounded-xl p-4 mb-4">
             <div class="muted text-xs">TRADE EXPIRY</div>
             <div class="timer mt-2">10s</div>
             <div class="muted text-xs mt-1">Automatic 10-second close</div>
           </div>
           <div class="grid grid-cols-2 gap-3">
-            <button onclick="attemptTrade('BUY')" class="btn bg-green-800 text-white">▲ BUY</button>
-            <button onclick="attemptTrade('SELL')" class="btn bg-red-800 text-white">▼ SELL</button>
+            <button onclick="attemptTrade('BUY')" class="btn bg-green-800 hover:bg-green-700 text-white">▲ BUY</button>
+            <button onclick="attemptTrade('SELL')" class="btn bg-red-800 hover:bg-red-700 text-white">▼ SELL</button>
           </div>
-          <p class="muted text-[10px] mt-4 leading-relaxed">10-second trade execution logic with market pricing.</p>
+          <p class="muted text-[10px] mt-4 leading-relaxed">Standard 75% payout ratio. Execution settles strictly against live chart price at expiry.</p>
         </div>
 
         <div class="panel p-5">
@@ -240,7 +241,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <h3 class="text-xl font-bold mb-3">Instant Scan & Pay</h3>
 
       <div class="english-inst">
-        Scan the official Gateway QR Code using any banking or mobile wallet app. Once completed, submit your transaction ID below for instant liquidity settlement.
+        Scan the official Gateway QR Code using any banking or mobile wallet app. Once completed, submit your transaction ID below for manual ledger verification.
       </div>
 
       <div class="qr-timer-display" id="qrTimerDisplay">03:00</div>
@@ -248,7 +249,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="qr-img-wrap">
         <img src="qr-code.png.jpeg" alt="ZERVONTrade payment QR code" onerror="this.style.display='none';document.getElementById('qrImageError').style.display='block'">
       </div>
-      <p id="qrImageError" style="display:none" class="text-center text-red-400 text-xs mb-3">QR image reference error. Ensure image is available.</p>
+      <p id="qrImageError" style="display:none" class="text-center text-red-400 text-xs mb-3">QR image reference error. Ensure qr-code.png.jpeg is available.</p>
 
       <form id="depositForm" onsubmit="submitQrDeposit(event)" class="space-y-3">
         <div>
@@ -289,40 +290,40 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <!-- WITHDRAWAL MODAL -->
 <div id="withdrawModal" class="qr-modal-overlay">
-<div class="qr-modal-box">
-<button onclick="closeWithdrawModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
-<div class="brand gold text-xs mb-2">ZERVON TRADE · WITHDRAWAL</div>
-<h3 class="text-xl font-bold mb-4">Withdrawal Request</h3>
+  <div class="qr-modal-box">
+    <button onclick="closeWithdrawModal()" class="absolute right-4 top-3 text-2xl muted">×</button>
+    <div class="brand gold text-xs mb-2">ZERVON TRADE · WITHDRAWAL</div>
+    <h3 class="text-xl font-bold mb-4">Withdrawal Request</h3>
 
-<form id="withdrawForm" class="space-y-3" onsubmit="submitWithdrawal(event)">
-<div>
-<label class="muted text-[11px] mb-1 block">Payment Channel</label>
-<select id="withdrawMethod" class="field" required>
-<option value="">Select withdrawal channel</option>
-<option value="Regional Express Transfer">Regional Express Mobile Wallet</option>
-<option value="Direct Bank Account">Direct Bank Account Transfer</option>
-</select>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Withdrawal Amount (PKR)</label>
-<input id="withdrawAmount" type="number" class="field" min="500" max="50000" step="1" placeholder="PKR 500 - 50,000" required>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Account Holder Name</label>
-<input id="withdrawAccountName" class="field" placeholder="Full name on payment account" required>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Account Number (11 Digits)</label>
-<input id="withdrawAccountNumber" class="field" placeholder="03001234567" maxlength="11" minlength="11" pattern="03[0-9]{9}" inputmode="tel" required>
-</div>
-<div>
-<label class="muted text-[11px] mb-1 block">Your Email</label>
-<input id="withdrawEmail" type="email" class="field" placeholder="Your email address" required>
-</div>
-<button id="withdrawSubmit" type="submit" class="btn goldbtn w-full mt-2">SUBMIT WITHDRAWAL REQUEST</button>
-</form>
-<p class="muted text-xs mt-4">Withdrawal amount will be deducted from your wallet immediately upon submission to prevent duplicate requests.</p>
-</div>
+    <form id="withdrawForm" class="space-y-3" onsubmit="submitWithdrawal(event)">
+      <div>
+        <label class="muted text-[11px] mb-1 block">Payment Channel</label>
+        <select id="withdrawMethod" class="field" required>
+          <option value="">Select withdrawal channel</option>
+          <option value="Regional Express Transfer">Regional Express Mobile Wallet</option>
+          <option value="Direct Bank Account">Direct Bank Account Transfer</option>
+        </select>
+      </div>
+      <div>
+        <label class="muted text-[11px] mb-1 block">Withdrawal Amount (PKR)</label>
+        <input id="withdrawAmount" type="number" class="field" min="500" max="50000" step="1" placeholder="PKR 500 - 50,000" required>
+      </div>
+      <div>
+        <label class="muted text-[11px] mb-1 block">Account Holder Name</label>
+        <input id="withdrawAccountName" class="field" placeholder="Full name on payment account" required>
+      </div>
+      <div>
+        <label class="muted text-[11px] mb-1 block">Account Number (11 Digits)</label>
+        <input id="withdrawAccountNumber" class="field" placeholder="03001234567" maxlength="11" minlength="11" pattern="03[0-9]{9}" inputmode="tel" required>
+      </div>
+      <div>
+        <label class="muted text-[11px] mb-1 block">Your Email</label>
+        <input id="withdrawEmail" type="email" class="field" placeholder="Your email address" required>
+      </div>
+      <button id="withdrawSubmit" type="submit" class="btn goldbtn w-full mt-2">SUBMIT WITHDRAWAL REQUEST</button>
+    </form>
+    <p class="muted text-xs mt-4">Withdrawal amount will be deducted from your wallet immediately upon submission to prevent duplicate requests.</p>
+  </div>
 </div>
 
 <!-- SECRET LOCAL ADMIN VAULT MODAL (Password: Ahadmehar1) -->
@@ -359,7 +360,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </div>
 
-<!-- DOPAMINE TRADING WIN POPUP MODAL -->
+<!-- TRADING WIN POPUP MODAL -->
 <div id="tradeWinModal" class="trade-modal-overlay">
   <div class="trade-modal-box">
     <div class="trade-icon-circle">✓</div>
@@ -371,14 +372,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="flex justify-between"><span>Asset:</span> <b id="winModalAsset" class="text-white">BTC / USD</b></div>
       <div class="flex justify-between"><span>Entry Price:</span> <b id="winModalEntry" class="text-white">$0.00</b></div>
       <div class="flex justify-between"><span>Exit Price:</span> <b id="winModalExit" class="text-white">$0.00</b></div>
-      <div class="flex justify-between"><span>Return Rate:</span> <b class="text-green-400">+80% Profit</b></div>
+      <div class="flex justify-between"><span>Return Rate:</span> <b class="text-green-400">+75% Payout</b></div>
     </div>
 
     <button onclick="closeWinModal()" class="btn goldbtn w-full">CONTINUE TRADING</button>
   </div>
 </div>
 
-<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#22292c] border border-[#4b5051] p-4 rounded-xl z-[90] text-sm max-w-[90vw] text-center"></div>
+<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#22292c] border border-[#d0ae70] p-4 rounded-xl z-[120] text-sm max-w-[90vw] text-center shadow-2xl font-medium"></div>
 
 <script>
 // WEB3FORMS CONFIGURATION
@@ -387,7 +388,7 @@ const WEB3FORMS_ACCESS_KEY = '04c6ebae-1591-4fc0-b364-e45be0326e2b';
 // HELPERS
 const $ = id => document.getElementById(id);
 let toastTimeout;
-let isTradeActive = false; // Active trade lock
+let isTradeActive = false;
 
 function toast(message) {
     $('toast').textContent = message;
@@ -403,7 +404,7 @@ function formatPKR(amount) {
     });
 }
 
-// DOPAMINE SOUND ENGINE (Web Audio API Chimes)
+// SOUND ENGINE (Web Audio API Chimes)
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
@@ -420,15 +421,15 @@ function playSound(type) {
 
         if (type === 'win') {
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(587.33, now); 
-            osc.frequency.setValueAtTime(880, now + 0.1); 
+            osc.frequency.setValueAtTime(587.33, now);
+            osc.frequency.setValueAtTime(880, now + 0.1);
             gain.gain.setValueAtTime(0.3, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
             osc.start(now);
             osc.stop(now + 0.4);
         } else if (type === 'loss') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, now); 
+            osc.frequency.setValueAtTime(220, now);
             osc.frequency.setValueAtTime(150, now + 0.15);
             gain.gain.setValueAtTime(0.2, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
@@ -520,7 +521,7 @@ function updateDashboard() {
     const history = $('transactionHistory');
 
     if (!currentAccount || !currentAccount.transactions || !currentAccount.transactions.length) {
-        history.innerHTML = '<div class="muted text-sm text-center py-5">No test transactions yet.</div>';
+        history.innerHTML = '<div class="muted text-sm text-center py-5">No transactions yet.</div>';
         return;
     }
 
@@ -588,8 +589,7 @@ function handleAccountSubmit(e) {
             password,
             balance: 0,
             transactions: [],
-            totalTrades: 0,
-            consecutiveLosses: 0
+            totalTrades: 0
         };
 
         savedAccounts.push(newAccount);
@@ -597,7 +597,6 @@ function handleAccountSubmit(e) {
 
         localStorage.setItem('zervon_saved_accounts', JSON.stringify(savedAccounts));
         localStorage.setItem('zervon_logged_email', email);
-
         $('accountStatus').textContent = 'Account created successfully.';
         toast('Account created successfully.');
     } else {
@@ -752,7 +751,9 @@ function adminApproveDeposit(idx) {
     }
 }
 
-// REAL HOUSE EDGE TRADING ENGINE (WITH PSYCHOLOGICAL BAIT, NEAR-MISS & WIN POPUP)
+// =========================================================================
+// BALANCED LIVE MARKET EXECUTION ENGINE (FIXED & EXPLOIT-FREE)
+// =========================================================================
 function attemptTrade(direction) {
     if (!currentAccount) {
         toast('Please login first to trade.');
@@ -769,77 +770,56 @@ function attemptTrade(direction) {
     const amount = Number($('tradeAmount').value);
 
     if (!Number.isFinite(amount) || amount < 500) {
-        alert('MINIMUM TRADE LIMIT\n\nMinimum trade investment amount is PKR 500.');
-        toast('Minimum trade amount is PKR 500');
+        toast('Minimum trade investment amount is PKR 500.');
         $('tradeAmount').focus();
         return;
     }
 
     if (amount > currentAccount.balance || currentAccount.balance <= 0) {
-        alert('INSUFFICIENT BALANCE\n\nYour available balance is ' + formatPKR(currentAccount.balance) + '. Please deposit funds first.');
-        toast('Insufficient balance.');
+        toast('Insufficient balance (' + formatPKR(currentAccount.balance) + '). Please deposit funds first.');
         return;
     }
 
     isTradeActive = true;
     const entryPrice = currentPrice;
 
+    // Deduct stake immediately upon order execution
     currentAccount.balance -= amount;
     updateDashboard();
 
-    toast(direction + ' trade placed at $' + entryPrice.toFixed(2) + '. 10s timer started.');
+    toast(direction + ' trade placed at ' + formatAssetPrice(entryPrice) + '. 10s expiry started.');
 
     let secondsLeft = 10;
     const timerDisplay = document.querySelector('.trade-card .timer');
     
     const tradeInterval = setInterval(() => {
         secondsLeft--;
-        if(timerDisplay) timerDisplay.textContent = secondsLeft + 's';
+        if (timerDisplay) timerDisplay.textContent = secondsLeft + 's';
 
         if (secondsLeft <= 0) {
             clearInterval(tradeInterval);
             isTradeActive = false;
-            if(timerDisplay) timerDisplay.textContent = '10s';
+            if (timerDisplay) timerDisplay.textContent = '10s';
 
             if (currentAccount.totalTrades === undefined) currentAccount.totalTrades = 0;
-            if (currentAccount.consecutiveLosses === undefined) currentAccount.consecutiveLosses = 0;
-
             currentAccount.totalTrades++;
+
+            // Settle strictly against actual live chart movement at the 10-second mark
+            const exitPrice = currentPrice;
             let isWin = false;
 
-            // 1. GUARANTEED FIRST TRADE WIN (100% Win Rate for the very first trade)
-            if (currentAccount.totalTrades === 1) {
-                isWin = true;
-            } 
-            // 2. Retention protection (If 3 losses in a row -> forced WIN)
-            else if (currentAccount.consecutiveLosses >= 3) {
-                isWin = true;
-            } 
-            // 3. Strict House Edge (28% Win Rate for all later trades)
-            else {
-                isWin = Math.random() < 0.28;
-            }
-
-            if (isWin) {
-                currentAccount.consecutiveLosses = 0;
+            if (direction === 'BUY') {
+                isWin = exitPrice > entryPrice;
             } else {
-                currentAccount.consecutiveLosses++;
+                isWin = exitPrice < entryPrice;
             }
 
-            // Calculate Exit Price naturally like other trading platforms
-            let priceDelta = 0.60 + Math.random() * 2.20;
-            let exitPrice;
-            if (isWin) {
-                exitPrice = direction === 'BUY' ? entryPrice + priceDelta : entryPrice - priceDelta;
-            } else {
-                // Natural market loss based on random movement or adverse tick
-                exitPrice = direction === 'BUY' ? entryPrice - priceDelta : entryPrice + priceDelta;
-            }
-
-            let profit = amount * 0.80;
+            // Standard balanced 75% market payout ratio
+            const payoutRate = 0.75;
+            const profit = Number((amount * payoutRate).toFixed(2));
 
             if (isWin) {
-                currentAccount.balance += (amount + profit);
+                currentAccount.balance = Number((currentAccount.balance + amount + profit).toFixed(2));
                 if (!currentAccount.transactions) currentAccount.transactions = [];
                 currentAccount.transactions.push({
                     type: 'TRADE WIN',
@@ -864,7 +844,7 @@ function attemptTrade(direction) {
                 });
                 updateDashboard();
                 playSound('loss');
-                toast('Trade Lost: -' + formatPKR(amount));
+                toast('Trade Closed in Loss: -' + formatPKR(amount) + ' (Exit: ' + formatAssetPrice(exitPrice) + ')');
             }
         }
     }, 1000);
@@ -873,8 +853,8 @@ function attemptTrade(direction) {
 // WIN POPUP MODAL FUNCTIONS
 function showWinModal(entry, exit, profit, asset) {
     $('winModalAsset').textContent = asset;
-    $('winModalEntry').textContent = '$' + entry.toFixed(2);
-    $('winModalExit').textContent = '$' + exit.toFixed(2);
+    $('winModalEntry').textContent = formatAssetPrice(entry);
+    $('winModalExit').textContent = formatAssetPrice(exit);
     $('winModalProfit').textContent = '+' + formatPKR(profit);
     $('tradeWinModal').style.display = 'flex';
 }
@@ -883,15 +863,33 @@ function closeWinModal() {
     $('tradeWinModal').style.display = 'none';
 }
 
-// MARKET DISPLAY CHART (PROFESSIONAL MULTI-TIMEFRAME CANDLESTICK & LINE ENGINE)
+// =========================================================================
+// MARKET DISPLAY CHART (BALANCED RANDOM-WALK VOLATILITY ENGINE)
+// =========================================================================
 let chart;
 let series;
 let volumeSeries;
 let candle;
 let currentPrice = 67482.20;
 let lastCandleTime = 0;
-let currentChartType = 'candle'; // 'candle' or 'line'
-let timeframeSeconds = 1; // Default candle pace
+let currentChartType = 'candle';
+let timeframeSeconds = 1;
+
+const assetBasePrices = {
+    'BTC / USD': { base: 67482.20, volatility: 45, decimals: 2, prefix: '$' },
+    'ETH / USD': { base: 3521.84, volatility: 3.5, decimals: 2, prefix: '$' },
+    'XAU / USD': { base: 2386.40, volatility: 1.8, decimals: 2, prefix: '$' },
+    'EUR / USD': { base: 1.08426, volatility: 0.00045, decimals: 5, prefix: '' }
+};
+
+function formatAssetPrice(val) {
+    const asset = $('tradeAsset') ? $('tradeAsset').value : 'BTC / USD';
+    const cfg = assetBasePrices[asset] || assetBasePrices['BTC / USD'];
+    return cfg.prefix + Number(val).toLocaleString('en-US', {
+        minimumFractionDigits: cfg.decimals,
+        maximumFractionDigits: cfg.decimals
+    });
+}
 
 function setChartType(type) {
     currentChartType = type;
@@ -908,31 +906,34 @@ function setChartType(type) {
 function setTimeframe(sec) {
     timeframeSeconds = sec;
     ['tf1s', 'tf5s', 'tf10s'].forEach(id => {
-        if($(id)) $(id).className = 'pill font-bold';
+        if ($(id)) $(id).className = 'pill font-bold';
     });
-    if(sec === 1 && $('tf1s')) $('tf1s').className = 'pill gold font-bold bg-[#1d2327]';
-    if(sec === 5 && $('tf5s')) $('tf5s').className = 'pill gold font-bold bg-[#1d2327]';
-    if(sec === 10 && $('tf10s')) $('tf10s').className = 'pill gold font-bold bg-[#1d2327]';
+    if (sec === 1 && $('tf1s')) $('tf1s').className = 'pill gold font-bold bg-[#1d2327]';
+    if (sec === 5 && $('tf5s')) $('tf5s').className = 'pill gold font-bold bg-[#1d2327]';
+    if (sec === 10 && $('tf10s')) $('tf10s').className = 'pill gold font-bold bg-[#1d2327]';
     startChart();
 }
 
 function onAssetOrModeChange() {
+    if (isTradeActive) {
+        toast('Wait for current trade to finish before switching assets.');
+        return;
+    }
     const asset = $('tradeAsset').value;
     $('activeAssetLabel').textContent = asset;
-}
-
-function money(n) {
-    return '$' + Number(n).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    const cfg = assetBasePrices[asset] || assetBasePrices['BTC / USD'];
+    currentPrice = cfg.base;
+    startChart();
 }
 
 function startChart() {
     const el = $('chart');
     if (!el || !window.LightweightCharts) return;
 
-    el.innerHTML = ''; // reset container
+    const asset = $('tradeAsset') ? $('tradeAsset').value : 'BTC / USD';
+    const cfg = assetBasePrices[asset] || assetBasePrices['BTC / USD'];
+
+    el.innerHTML = '';
 
     chart = LightweightCharts.createChart(el, {
         width: el.clientWidth,
@@ -945,7 +946,7 @@ function startChart() {
             vertLines: { color: '#1a2126' },
             horzLines: { color: '#1a2126' }
         },
-        rightPriceScale: { 
+        rightPriceScale: {
             borderColor: '#283138',
             scaleMargins: { top: 0.1, bottom: 0.2 }
         },
@@ -966,18 +967,27 @@ function startChart() {
             borderUpColor: '#18c58a',
             borderDownColor: '#f05d68',
             wickUpColor: '#18c58a',
-            wickDownColor: '#f05d68'
+            wickDownColor: '#f05d68',
+            priceFormat: {
+                type: 'price',
+                precision: cfg.decimals,
+                minMove: cfg.decimals === 5 ? 0.00001 : 0.01
+            }
         });
     } else {
         series = chart.addAreaSeries({
             topColor: 'rgba(24, 197, 138, 0.4)',
             bottomColor: 'rgba(24, 197, 138, 0.0)',
             lineColor: '#18c58a',
-            lineWidth: 2
+            lineWidth: 2,
+            priceFormat: {
+                type: 'price',
+                precision: cfg.decimals,
+                minMove: cfg.decimals === 5 ? 0.00001 : 0.01
+            }
         });
     }
 
-    // Volume Histogram Sub-pane
     volumeSeries = chart.addHistogramSeries({
         color: '#26a69a',
         priceFormat: { type: 'volume' },
@@ -996,11 +1006,12 @@ function startChart() {
     for (let i = 90; i >= 0; i--) {
         const t = now - (i * timeframeSeconds);
         const o = p;
-        const c = o + (Math.random() - 0.48) * (timeframeSeconds * 40);
+        // Neutral 50/50 random walk (Math.random() - 0.5)
+        const c = o + (Math.random() - 0.5) * (timeframeSeconds * cfg.volatility);
         const vol = Math.floor(Math.random() * 5000 + 1200);
-        
+
         if (currentChartType === 'candle') {
-            const spread = 20 + Math.random() * (timeframeSeconds * 30);
+            const spread = (cfg.volatility * 0.3) + Math.random() * (timeframeSeconds * cfg.volatility * 0.6);
             data.push({
                 time: t,
                 open: o,
@@ -1047,7 +1058,12 @@ function startChart() {
 function updatePrice() {
     if (!series || !candle) return;
 
-    const next = currentPrice + (Math.random() - 0.49) * 120;
+    const asset = $('tradeAsset') ? $('tradeAsset').value : 'BTC / USD';
+    const cfg = assetBasePrices[asset] || assetBasePrices['BTC / USD'];
+
+    // Balanced unbiased 50/50 market tick movement
+    const delta = (Math.random() - 0.5) * (cfg.volatility * 1.4);
+    const next = Math.max(0.0001, currentPrice + delta);
     const nowSec = Math.floor(Date.now() / 1000);
 
     if (nowSec >= lastCandleTime + timeframeSeconds) {
@@ -1067,7 +1083,7 @@ function updatePrice() {
             };
         }
         
-        if(volumeSeries) {
+        if (volumeSeries) {
             volumeSeries.update({
                 time: nowSec,
                 value: Math.floor(Math.random() * 3000 + 800),
@@ -1087,18 +1103,22 @@ function updatePrice() {
     series.update(candle);
     currentPrice = next;
 
-    $('price').textContent = money(next);
-    $('btc').textContent = money(next);
+    $('price').textContent = formatAssetPrice(next);
+    if (asset === 'BTC / USD') $('btc').textContent = formatAssetPrice(next);
+    if (asset === 'ETH / USD') $('eth').textContent = formatAssetPrice(next);
+    if (asset === 'XAU / USD') $('xau').textContent = formatAssetPrice(next);
+    if (asset === 'EUR / USD') $('eur').textContent = formatAssetPrice(next);
+
     if (currentChartType === 'candle') {
-        $('openPrice').textContent = money(candle.open);
-        $('highPrice').textContent = money(candle.high);
-        $('lowPrice').textContent = money(candle.low);
-        $('closePrice').textContent = money(candle.close);
+        $('openPrice').textContent = formatAssetPrice(candle.open);
+        $('highPrice').textContent = formatAssetPrice(candle.high);
+        $('lowPrice').textContent = formatAssetPrice(candle.low);
+        $('closePrice').textContent = formatAssetPrice(candle.close);
     } else {
-        $('openPrice').textContent = money(next);
-        $('highPrice').textContent = money(next);
-        $('lowPrice').textContent = money(next);
-        $('closePrice').textContent = money(next);
+        $('openPrice').textContent = formatAssetPrice(next);
+        $('highPrice').textContent = formatAssetPrice(next);
+        $('lowPrice').textContent = formatAssetPrice(next);
+        $('closePrice').textContent = formatAssetPrice(next);
     }
 }
 
@@ -1133,8 +1153,8 @@ function renderSampleActivity() {
                 </div>
             </div>
             <div class="text-right shrink-0">
-                <div class="text-xs font-extrabold ${Math.random() > 0.45 ? 'text-green-400' : 'text-red-400'}">
-                    ${Math.random() > 0.45 ? 'BUY' : 'SELL'}
+                <div class="text-xs font-extrabold ${Math.random() > 0.5 ? 'text-green-400' : 'text-red-400'}">
+                    ${Math.random() > 0.5 ? 'BUY' : 'SELL'}
                 </div>
                 <div class="text-xs gold mt-1">
                     PKR ${randomActivityItem(sampleAmounts).toLocaleString('en-PK')}
@@ -1155,7 +1175,7 @@ async function sendNovaEmail(subject, message, email) {
         body: JSON.stringify({
             access_key: WEB3FORMS_ACCESS_KEY,
             subject,
-            from_name: 'NOVA TRADE',
+            from_name: 'ZERVON TRADE',
             email,
             message
         })
@@ -1168,7 +1188,7 @@ async function sendNovaEmail(subject, message, email) {
     return result;
 }
 
-// DEPOSIT MODAL & AUTOMATIC CREDIT ENGINE
+// DEPOSIT MODAL & MANUAL VERIFICATION ENGINE
 let qrTimerInterval = null;
 let qrSecondsLeft = 180;
 
@@ -1221,39 +1241,6 @@ function updateQrTimer() {
     $('qrTimerDisplay').textContent = qrSecondsLeft <= 0 ? 'EXPIRED' : m + ':' + s;
 }
 
-function checkPendingCredits() {
-    if (!currentAccount) return;
-
-    const now = Date.now();
-    let updated = false;
-
-    if (currentAccount.pendingCredits) {
-        currentAccount.pendingCredits.forEach(credit => {
-            if (!credit.completed) {
-                const remaining = Math.max(0, Math.ceil((credit.creditAt - now) / 1000));
-                if (now >= credit.creditAt) {
-                    credit.completed = true;
-                    currentAccount.balance += credit.amount;
-                    if (!currentAccount.transactions) currentAccount.transactions = [];
-                    currentAccount.transactions.push({
-                        type: 'DEPOSIT CREDIT',
-                        amount: credit.amount,
-                        method: credit.method,
-                        tid: credit.tid,
-                        date: new Date().toLocaleString(),
-                        status: 'COMPLETED'
-                    });
-                    updated = true;
-                }
-            }
-        });
-    }
-
-    if (updated) {
-        updateDashboard();
-    }
-}
-
 async function submitQrDeposit(e) {
     e.preventDefault();
 
@@ -1289,10 +1276,10 @@ async function submitQrDeposit(e) {
     $('qrSubmitButton').disabled = true;
     $('qrSubmitButton').textContent = 'SENDING...';
 
-    const message = 'NOVA TRADE DEPOSIT REQUEST\n\nUser: ' + currentAccount.name + '\nTID: ' + tid + '\nAmount: ' + amount + ' PKR';
+    const message = 'ZERVON TRADE DEPOSIT REQUEST\n\nUser: ' + currentAccount.name + '\nTID: ' + tid + '\nAmount: ' + amount + ' PKR';
 
     try {
-        await sendNovaEmail('DEPOSIT REQUEST | NOVA TRADE', message, email);
+        await sendNovaEmail('DEPOSIT REQUEST | ZERVON TRADE', message, email);
     } catch (err) {
         console.log("Email notification error", err);
     }
@@ -1332,8 +1319,7 @@ function openWithdrawModal() {
     }
 
     if (currentAccount.balance < 500) {
-        alert('MINIMUM WITHDRAWAL LIMIT\n\nYour available balance is ' + formatPKR(currentAccount.balance) + '. Minimum withdrawal amount is PKR 500.');
-        toast('Minimum withdrawal amount is PKR 500.');
+        toast('Minimum withdrawal amount is PKR 500. Available balance: ' + formatPKR(currentAccount.balance));
         return;
     }
 
@@ -1370,8 +1356,7 @@ async function submitWithdrawal(e) {
     const email = $('withdrawEmail').value.trim();
 
     if (amount > currentAccount.balance) {
-        alert('INSUFFICIENT BALANCE FOR WITHDRAWAL\n\nYour available balance is ' + formatPKR(currentAccount.balance) + '.');
-        toast('Withdrawal amount exceeds available balance.');
+        toast('Withdrawal amount exceeds available balance (' + formatPKR(currentAccount.balance) + ').');
         return;
     }
 
@@ -1382,8 +1367,7 @@ async function submitWithdrawal(e) {
 
     const phoneRegex = /^03\d{9}$/;
     if (!phoneRegex.test(accountNumber)) {
-        alert('INVALID MOBILE NUMBER\n\nPlease enter a valid 11-digit mobile wallet number starting with 03.');
-        toast('Please enter a valid 11-digit number starting with 03.');
+        toast('Please enter a valid 11-digit mobile wallet number starting with 03.');
         return;
     }
 
@@ -1391,7 +1375,7 @@ async function submitWithdrawal(e) {
     button.disabled = true;
     button.textContent = 'PROCESSING...';
 
-    currentAccount.balance -= amount;
+    currentAccount.balance = Number((currentAccount.balance - amount).toFixed(2));
     
     if (!currentAccount.transactions) currentAccount.transactions = [];
     currentAccount.transactions.push({
@@ -1409,13 +1393,12 @@ async function submitWithdrawal(e) {
     const message = 'WITHDRAWAL REQUEST\nUser: ' + currentAccount.name + '\nAmount: ' + amount + ' PKR\nAccount: ' + accountNumber;
 
     try {
-        await sendNovaEmail('WITHDRAWAL REQUEST | zervon TRADE', message, email);
+        await sendNovaEmail('WITHDRAWAL REQUEST | ZERVON TRADE', message, email);
         closeWithdrawModal();
         $('withdrawForm').reset();
-        toast('Withdrawal request submitted! Amount reserved.');
-        alert('🎉 WITHDRAWAL SUBMITTED!\n\nPKR ' + amount.toLocaleString('en-PK') + ' has been deducted from your balance.');
+        toast('Withdrawal request submitted! PKR ' + amount.toLocaleString('en-PK') + ' reserved from balance.');
     } catch (error) {
-        currentAccount.balance += amount;
+        currentAccount.balance = Number((currentAccount.balance + amount).toFixed(2));
         currentAccount.transactions.pop();
         updateDashboard();
         toast(error.message || 'Network error. Withdrawal failed, balance restored.');
